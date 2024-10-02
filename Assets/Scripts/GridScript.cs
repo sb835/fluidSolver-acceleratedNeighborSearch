@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// This will be improved
+
 public class GridScript : MonoBehaviour
 {
     private SimulationScript simulation;

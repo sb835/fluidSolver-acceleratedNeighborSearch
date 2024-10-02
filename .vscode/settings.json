@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "fluidSolver.sln"
+    "dotnet.defaultSolution": "fluidSolver-acceleratedNeighborSearch.sln"
 }
