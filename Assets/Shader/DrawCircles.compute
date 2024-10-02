@@ -1,0 +1,90 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Circles
+#pragma kernel Clear
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+shared RWTexture2D<float4> Result;
+
+struct circle
+{
+	float2 origin;
+	float4 color;
+	float radius;
+};
+
+StructuredBuffer<circle> circlesBuffer;
+
+float4 clearColor;
+float4 circleColor;
+int texResolution;
+int clearScreen = 0;
+
+/*Returns pseudo random number in range 0 <= x < 1 */
+float random(float value, float seed = 0.546){
+	float random = (frac(sin(value + seed) * 143758.5453));// + 1.0)/2.0;
+	return random;
+}
+
+float2 random2(float value){
+	return float2(
+		random(value, 3.9812),
+		random(value, 7.1536)
+	);
+}
+
+void plot1( int x, int y, int2 centre){
+    Result[uint2(centre.x + x, centre.y + y)] = circleColor;
+}
+
+void plot8( int x, int y, int2 centre ) {
+	plot1(  x,  y, centre );  plot1(  y,  x, centre );
+	plot1(  x, -y, centre );  plot1(  y, -x, centre );
+	plot1( -x, -y, centre );  plot1( -y, -x, centre );
+	plot1( -x,  y, centre );  plot1( -y,  x, centre );
+}
+
+void PutPixel(int x, int y, float4 color)
+{  
+   Result[int2(x, y)] = color;
+}
+
+void DrawCircle(float2 centre, float radius, float4 color)
+{
+  int x, y, px, nx, py, ny, d;
+  
+  float r = radius;
+ 
+  for (x = 0; x <= r; x++)
+  {
+  d = (int)ceil(sqrt(r * r - x * x));
+  for (y = 0; y <= d; y++)
+  {
+  px = centre.x + x;
+  nx = centre.x - x;
+  py = centre.y + y;
+  ny = centre.y - y;
+ 
+       PutPixel(px, py, color);
+       PutPixel(nx, py, color);
+       PutPixel(px, ny, color);
+       PutPixel(nx, ny, color);
+  }
+  }  
+}
+
+[numthreads(32,1,1)]
+void Circles (uint3 id : SV_DispatchThreadID)
+{
+    int2 centre = (int2)(circlesBuffer[id.x].origin);
+	float4 color = (float4)(circlesBuffer[id.x].color);
+	uint radius = (int)circlesBuffer[id.x].radius;
+
+	DrawCircle(centre, radius, color);
+}
+
+[numthreads(8,8,1)]
+void Clear (uint3 id : SV_DispatchThreadID)
+{
+	Result[id.xy] = clearColor;
+}
