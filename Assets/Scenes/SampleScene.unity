@@ -149,8 +149,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   width: 55
-  height: 50
+  height: 55
   cellSize: 0.4
+  gridPos: {x: 0, y: 0}
+  gridContent: 
+  chooseNeighborSearch: 2
+  cellCounter: 
+  sortedParticleArray: 
+  displayHashTable: 
+  parallelSearchActivated: 1
+  drawGridEnabled: 0
+  sortValues: 1
 --- !u!4 &155552757
 Transform:
   m_ObjectHideFlags: 0
@@ -306,26 +315,28 @@ MonoBehaviour:
   colorParticles: 0
   countAvgDensity: 0
   countCFLConditions: 0
-  resetParticles: 1
-  borderOffset: 7
-  tests: 0
-  tP: 0
+  resetParticles: 0
+  borderOffset: 15
+  tests: 2
+  tS: 0
+  maxTS: 1000
   averageDensity: []
   cflConditions: []
-  amountParticles: {x: 35, y: 35}
-  particlePosition: {x: 1.1, y: 1.1}
+  queryTimes: []
+  amountParticles: {x: 45, y: 95}
+  particlePosition: {x: 0.5, y: 0.5}
   particleStartSpacing: 0.2
   speedColor: 4
   alpha: 2.839606
+  particleArray: 
   positions: []
   velocitys: []
   colors: []
+  numNeighbors: 
   densitys: []
   pressures: []
   forces: []
   nPForces: []
-  boundaryPositions: []
-  boundaryColors: []
   maxVelocity: {x: 5, y: 5}
   timeStepMultiplyer: 1
   timeStep: 0.014
@@ -340,7 +351,21 @@ MonoBehaviour:
   startDensity: 1.5
   texResolution: 2048
   kernelSupportRadius: 0
+  constructionTime: 0
+  queryTime: 0
+  averageConstructionTime: 0
+  averageQueryTime: 0
+  averageTotalTime: 0
+  sortedParticles: 
+  sortedPositions: []
+  sortedVelocitys: []
+  sortedColors: []
+  sortedDensitys: []
+  sortedPressures: []
+  sortedForces: []
+  sortedNPForces: []
   mainCamera: {fileID: 519420031}
+  doubleBorder: 1
   gravity: -2
   currentParticle: 0
   currentGridCell: {x: 0, y: 0}
@@ -388,12 +413,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44ddcdd5cee7f6a43920ea3155a68ea6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  findParticle: 0
+  searchParticle: 0
   colorDensitys: 0
-  alpha: 2.839606
+  alpha: 0
   addAlpha: 0
   particle: 0
   gridCell: {x: 0, y: 0}
+  hashIndex: 0
   particlePosition: {x: 0, y: 0}
+  particleNeighbors: 
   particleVelocity: {x: 0, y: 0}
   neighbor: 0
   kernel: 0
@@ -535,6 +564,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 521666328}
+  - {fileID: 155552757}
   - {fileID: 1984741419}
   - {fileID: 598455288}
-  - {fileID: 155552757}
