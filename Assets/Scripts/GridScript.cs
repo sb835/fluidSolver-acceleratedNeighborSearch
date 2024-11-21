@@ -23,7 +23,8 @@ public class GridScript : MonoBehaviour
     private int hashTableLength;
     public bool parallelSearchActivated;
     public bool drawGridEnabled;
-    public bool sortValues;
+    private bool sortValues;
+    public bool randomInitializedParticles;
 
     private int texResolution;
     private Camera mainCamera;
@@ -33,7 +34,7 @@ public class GridScript : MonoBehaviour
         simulation = GameObject.FindGameObjectWithTag("Simulation").GetComponent<SimulationScript>();
         grid = new List<int>[width, height];
         cellCounter = new int[(width * height * 2) + 1];
-        hashTable = new List<int>[width * height];
+        hashTable = new List<int>[width * height * 2];
         hashTableLength = hashTable.Length;
         displayHashTable = new int[hashTableLength];
 
@@ -146,9 +147,27 @@ public class GridScript : MonoBehaviour
                 Vector2 texThree = computeWorldCoords(x + 1, y);
                 if (drawGridEnabled)
                 {
-                    TextMesh text = UtilsClass.CreateWorldText(cellZIndices[x, y].ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                    if (chooseNeighborSearch == 0)
+                    {
+                        TextMesh text = UtilsClass.CreateWorldText("(" + x + "," + y + ")", null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                        text.characterSize = 0.05f;
+                    }
+                    else if (chooseNeighborSearch == 1)
+                    {
+                        TextMesh text = UtilsClass.CreateWorldText(computeUniqueCellIndex(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                        text.characterSize = 0.05f;
+                    }
+                    else if (chooseNeighborSearch == 2)
+                    {
+                        TextMesh text = UtilsClass.CreateWorldText(computeZIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                        text.characterSize = 0.05f;
+                    }
+                    else if (chooseNeighborSearch == 3)
+                    {
+                        TextMesh text = UtilsClass.CreateWorldText(computeHashIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                        text.characterSize = 0.05f;
+                    }
                     // TextMesh text = UtilsClass.CreateWorldText(Convert.ToString(computeZIndexForCell(x, y), 2), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
-                    text.characterSize = 0.05f;
                 }
                 Debug.DrawLine(texOne, texTwo, Color.black, 1000f);
                 Debug.DrawLine(texOne, texThree, Color.black, 1000f);

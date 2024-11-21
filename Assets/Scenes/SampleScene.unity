@@ -153,13 +153,13 @@ MonoBehaviour:
   cellSize: 0.4
   gridPos: {x: 0, y: 0}
   gridContent: 
-  chooseNeighborSearch: 2
+  chooseNeighborSearch: 0
   cellCounter: 
   sortedParticleArray: 
   displayHashTable: 
   parallelSearchActivated: 1
   drawGridEnabled: 0
-  sortValues: 1
+  randomInitializedParticles: 0
 --- !u!4 &155552757
 Transform:
   m_ObjectHideFlags: 0
@@ -413,12 +413,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44ddcdd5cee7f6a43920ea3155a68ea6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  particleNum: 0
+  particle: 0
   findParticle: 0
   searchParticle: 0
   colorDensitys: 0
   alpha: 0
   addAlpha: 0
-  particle: 0
   gridCell: {x: 0, y: 0}
   hashIndex: 0
   particlePosition: {x: 0, y: 0}
@@ -466,7 +467,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shader: {fileID: 7200000, guid: 9cb9bf8ee29f38c478747e7cd9c5c418, type: 3}
-  texResolution: 2048
+  texResolution: 8192
   clearColor: {r: 0.5597484, g: 0.55446774, b: 0.55446774, a: 0}
   total: 0
 --- !u!64 &1984741416
@@ -552,8 +553,8 @@ Transform:
   m_GameObject: {fileID: 1984741414}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10, y: 10, z: 0}
-  m_LocalScale: {x: 20, y: 20, z: 1}
+  m_LocalPosition: {x: 25, y: 25, z: 0}
+  m_LocalScale: {x: 50, y: 50, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

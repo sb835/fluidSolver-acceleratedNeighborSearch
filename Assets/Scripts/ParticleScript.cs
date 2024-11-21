@@ -8,12 +8,13 @@ public class ParticleScript : MonoBehaviour
 {
     private SimulationScript simulation;
     private GridScript spatialGrid;
+    public int particleNum;
+    public int particle;
     public bool findParticle;
     public int searchParticle;
     public bool colorDensitys;
     public float alpha;
     public float addAlpha;
-    public int particle;
     public Vector2 gridCell;
     public int hashIndex;
     public Vector2 particlePosition;
@@ -53,6 +54,8 @@ public class ParticleScript : MonoBehaviour
         {
             particle = simulation.currentParticle;
         }
+        particleNum = simulation.particleArray[particle];
+
         gridCell = simulation.currentGridCell;
 
         particleNeighbors = simulation.neighbors[particle];

@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System;
 
 // Start
 
@@ -52,6 +53,8 @@ public class SimulationScript : MonoBehaviour
     public float particleVolume;
     public float startDensity = 1.5f;
     public int texResolution = 2048;
+    private float quadWidth;
+    private float quadHeight;
     public float kernelSupportRadius;
     public double constructionTime;
     public double queryTime;
@@ -93,6 +96,8 @@ public class SimulationScript : MonoBehaviour
         drawCirclesScript = GameObject.FindGameObjectWithTag("DrawCircle").GetComponent<DrawCirclesScript>();
         spatialGrid = GameObject.FindGameObjectWithTag("Grid").GetComponent<GridScript>();
         texResolution = drawCirclesScript.texResolution;
+        quadWidth = drawCirclesScript.transform.localScale.x;
+        quadHeight = drawCirclesScript.transform.localScale.y;
         particleSpacing = spatialGrid.cellSize / 2;
         particleVolume = particleSpacing * particleSpacing;
         particleMass = startDensity * particleVolume;
@@ -115,6 +120,12 @@ public class SimulationScript : MonoBehaviour
         boundaries = new Vector2(16, 9);
 
         initializeParticles(resetParticles, (int)amountParticles.x, (int)amountParticles.y, particlePosition, particleStartSpacing);
+
+        // Reorder Particles
+        if (spatialGrid.randomInitializedParticles)
+        {
+            ShuffleParticlesRandom();
+        }
 
         // Initialize Grid
 
@@ -145,6 +156,13 @@ public class SimulationScript : MonoBehaviour
             initializeBorder3(doubleBorder);
             mainCamera.orthographicSize = 10;
             mainCamera.transform.position = new Vector3(12, 10, -10);
+        }
+
+        else if (tests == 3)
+        {
+            initializeBorder4(doubleBorder);
+            mainCamera.orthographicSize = 20;
+            mainCamera.transform.position = new Vector3(22, 20, -10);
         }
 
         neighbors = new List<int>[numParticles + numBoundaries];
@@ -592,6 +610,101 @@ public class SimulationScript : MonoBehaviour
         }
     }
 
+    void initializeBorder4(bool doubleBorder)
+    {
+        // Box
+        // Down
+        float x = 0.0f + particleSize;
+        float y = 0.0f + particleSize;
+        for (int i = 0; i < 332; i++)
+        {
+            InitBoundaryParticle(new Vector2(x, y));
+
+            x += 2 * particleSize;
+        }
+
+        // Double
+        if (doubleBorder)
+        {
+            x = 0.0f + particleSize;
+            y = 0.0f + 3 * particleSize;
+            for (int i = 0; i < 332; i++)
+            {
+                InitBoundaryParticle(new Vector2(x, y));
+
+                x += 2 * particleSize;
+            }
+        }
+
+        // Top
+        x = 0.0f - particleSize;
+        y = 40.0f - particleSize;
+        for (int i = 0; i < 332; i++)
+        {
+            InitBoundaryParticle(new Vector2(x, y));
+
+            x += 2 * particleSize;
+        }
+
+        // Double
+        if (doubleBorder)
+        {
+            x = 0.0f - particleSize;
+            y = 40.0f - 3 * particleSize;
+            for (int i = 0; i < 332; i++)
+            {
+                InitBoundaryParticle(new Vector2(x, y));
+
+                x += 2 * particleSize;
+            }
+        }
+
+        // Left
+        x = 0.0f + particleSize;
+        y = 0.0f + 4 * particleSize;
+        for (int i = 0; i < 332; i++)
+        {
+            InitBoundaryParticle(new Vector2(x, y));
+
+            y += 2 * particleSize;
+        }
+
+        // Double
+        if (doubleBorder)
+        {
+            x = 0.0f + 3 * particleSize;
+            y = 0.0f + 5 * particleSize;
+            for (int i = 0; i < 332; i++)
+            {
+                InitBoundaryParticle(new Vector2(x, y));
+
+                y += 2 * particleSize;
+            }
+        }
+
+        // Right
+        x = 40.0f - 2 * particleSize;
+        y = 0.0f + 4 * particleSize;
+        for (int i = 0; i < 332; i++)
+        {
+            InitBoundaryParticle(new Vector2(x, y));
+
+            y += 2 * particleSize;
+        }
+
+        // Double
+        if (doubleBorder)
+        {
+            x = 40.0f - 4 * particleSize;
+            y = 0.0f + 5 * particleSize;
+            for (int i = 0; i < 332; i++)
+            {
+                InitBoundaryParticle(new Vector2(x, y));
+
+                y += 2 * particleSize;
+            }
+        }
+    }
     void initializeBorderWall(float xOffset, bool exists)
     {
         if (exists)
@@ -627,20 +740,6 @@ public class SimulationScript : MonoBehaviour
         }
     }
 
-    void constructionSpatialHashing()
-    {
-        // clear the hash table
-        // iterate one time over all grid cells
-        spatialGrid.clearHashTable();
-
-        // Add the number of each particle in the respective grid cell
-        // iterate one time over all particles
-        for (int i = 0; i < numParticles + numBoundaries; i++)
-        {
-            int hashIndex = spatialGrid.computeHashIndex(positions[i]);
-            spatialGrid.hashTable[hashIndex].Add(i);
-        }
-    }
 
     void constructionIndexSort()
     {
@@ -763,6 +862,20 @@ public class SimulationScript : MonoBehaviour
             nPForces = new List<Vector2>(sortedNPForces);
         }
     }
+    void constructionSpatialHashing()
+    {
+        // clear the hash table
+        // iterate one time over all grid cells
+        spatialGrid.clearHashTable();
+
+        // Add the number of each particle in the respective grid cell
+        // iterate one time over all particles
+        for (int i = 0; i < numParticles + numBoundaries; i++)
+        {
+            int hashIndex = spatialGrid.computeHashIndex(positions[i]);
+            spatialGrid.hashTable[hashIndex].Add(i);
+        }
+    }
     // Query Methods
     // query means quering through our potential neighbors and finding real neighbors
     void queryGrid()
@@ -773,7 +886,7 @@ public class SimulationScript : MonoBehaviour
             //Limiting the maximum degree of parallelism to 8
             var options = new ParallelOptions()
             {
-                MaxDegreeOfParallelism = 8
+                MaxDegreeOfParallelism = -1
             };
             Parallel.For(0, numParticles + numBoundaries, options, i =>
             {
@@ -802,7 +915,7 @@ public class SimulationScript : MonoBehaviour
             //Limiting the maximum degree of parallelism to 8
             var options = new ParallelOptions()
             {
-                MaxDegreeOfParallelism = 8
+                MaxDegreeOfParallelism = -1
             };
             Parallel.For(0, numParticles + numBoundaries, options, i =>
             {
@@ -832,7 +945,7 @@ public class SimulationScript : MonoBehaviour
             //Limiting the maximum degree of parallelism to 8
             var options = new ParallelOptions()
             {
-                MaxDegreeOfParallelism = 8
+                MaxDegreeOfParallelism = -1
             };
             Parallel.For(0, numParticles + numBoundaries, options, i =>
             {
@@ -862,7 +975,7 @@ public class SimulationScript : MonoBehaviour
             //Limiting the maximum degree of parallelism to 8
             var options = new ParallelOptions()
             {
-                MaxDegreeOfParallelism = 8
+                MaxDegreeOfParallelism = -1
             };
             Parallel.For(0, numParticles + numBoundaries, options, i =>
             {
@@ -897,11 +1010,19 @@ public class SimulationScript : MonoBehaviour
                 int cellY = (int)gridCell.y + y;
                 if (spatialGrid.isValidCell(new Vector2(cellX, cellY)))
                 {
-                    foreach (int p in spatialGrid.grid[cellX, cellY])
+                    // foreach (int p in spatialGrid.grid[cellX, cellY])
+                    // {
+                    //     if (Vector2.Distance(positions[i], positions[p]) < kernelSupportRadius)
+                    //     {
+                    //         n.Add(p);
+                    //     }
+                    // }
+                    List<int> potentialNeighbors = spatialGrid.grid[cellX, cellY];
+                    for (int j = 0; j < potentialNeighbors.Count; j++)
                     {
-                        if (Vector2.Distance(positions[i], positions[p]) < kernelSupportRadius)
+                        if (Vector2.Distance(positions[i], positions[potentialNeighbors[j]]) < kernelSupportRadius)
                         {
-                            n.Add(p);
+                            n.Add(potentialNeighbors[j]);
                         }
                     }
                 }
@@ -951,8 +1072,8 @@ public class SimulationScript : MonoBehaviour
                 int cellY = (int)gridCell.y + y;
                 if (spatialGrid.isValidCell(new Vector2(cellX, cellY)))
                 {
-                    // long cellIndex = spatialGrid.computeZIndexForCell(cellX, cellY);
-                    long cellIndex = cellZIndices[cellX, cellY];
+                    long cellIndex = spatialGrid.computeZIndexForCell(cellX, cellY);
+                    // long cellIndex = cellZIndices[cellX, cellY];
                     int cellStart = spatialGrid.cellCounter[cellIndex];
                     int cellEnd = spatialGrid.cellCounter[cellIndex + 1];
                     for (int j = cellStart; j < cellEnd; j++)
@@ -983,6 +1104,13 @@ public class SimulationScript : MonoBehaviour
                 if (spatialGrid.isValidCell(new Vector2(cellX, cellY)))
                 {
                     int cellIndex = spatialGrid.computeHashIndexForCell(cellX, cellY);
+                    // foreach (int p in spatialGrid.hashTable[cellIndex])
+                    // {
+                    //     if (Vector2.Distance(positions[i], positions[p]) < kernelSupportRadius)
+                    //     {
+                    //         n.Add(p);
+                    //     }
+                    // }
                     if (!hashIndices.Contains(cellIndex))
                     {
                         hashIndices.Add(cellIndex);
@@ -1134,6 +1262,12 @@ public class SimulationScript : MonoBehaviour
                 mainCamera.orthographicSize = 10;
                 mainCamera.transform.position = new Vector3(12, 10, -10);
             }
+            else if (tests == 3)
+            {
+                initializeBorder4(doubleBorder);
+                mainCamera.orthographicSize = 20;
+                mainCamera.transform.position = new Vector3(22, 20, -10);
+            }
 
             averageDensity = new List<float>();
 
@@ -1171,14 +1305,14 @@ public class SimulationScript : MonoBehaviour
         {
             Vector3 screenPosition = Input.mousePosition;
             screenPosition.z = Camera.main.nearClipPlane + 1;
-            mouseForceOut(Camera.main.ScreenToWorldPoint(screenPosition), 2f, 1.5f);
+            mouseForceOut(Camera.main.ScreenToWorldPoint(screenPosition), 3f, 2.5f);
         }
 
         if (Input.GetKey(KeyCode.D))
         {
             Vector3 screenPosition = Input.mousePosition;
             screenPosition.z = Camera.main.nearClipPlane + 1;
-            mouseForceIn(Camera.main.ScreenToWorldPoint(screenPosition), 2f, 1.5f);
+            mouseForceIn(Camera.main.ScreenToWorldPoint(screenPosition), 3f, 2.5f);
         }
 
         // Mouse input
@@ -1486,7 +1620,7 @@ public class SimulationScript : MonoBehaviour
 
         Color[] particleColors = colors.ToArray();
 
-        drawCirclesScript.DrawCirclesAtPositions(convertPositions(particlePositions), particleColors, particleSize * 102.4f);
+        drawCirclesScript.DrawCirclesAtPositions(convertPositions(particlePositions), particleColors, particleSize * (texResolution / quadWidth));
         drawCirclesScript.DispatchKernel(Mathf.Max(particlePositions.Length / 16, 1));
     }
 
@@ -1496,7 +1630,7 @@ public class SimulationScript : MonoBehaviour
         Vector2[] results = new Vector2[pos.Length];
         for (int i = 0; i < pos.Length; i++)
         {
-            results[i] = pos[i] * 102.4f;
+            results[i] = pos[i] * (texResolution / quadWidth);
         }
         return results;
     }
@@ -1533,7 +1667,23 @@ public class SimulationScript : MonoBehaviour
         numBoundaries++;
     }
 
-
+    private void ShuffleParticlesRandom()
+    {
+        System.Random rnd = new System.Random();
+        // Iterate through all Particles
+        for (int i = 0; i < numParticles + numBoundaries; i++)
+        {
+            // Choose a random Particle
+            int rndParticle = rnd.Next(0, numParticles + numBoundaries);
+            // Swap Particle attributes
+            int tmpParticleReference = particleArray[i];
+            Vector2 tmpParticlePosition = positions[i];
+            particleArray[i] = particleArray[rndParticle];
+            positions[i] = positions[rndParticle];
+            particleArray[rndParticle] = tmpParticleReference;
+            positions[rndParticle] = tmpParticlePosition;
+        }
+    }
     // Return mouse position
     private void ReturnMouse()
     {
