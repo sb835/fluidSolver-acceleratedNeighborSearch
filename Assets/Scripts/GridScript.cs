@@ -13,14 +13,21 @@ public class GridScript : MonoBehaviour
     public Vector2 gridPos;
     public List<int> gridContent;
     public int chooseNeighborSearch;
+    public int[] cellKeys;
     public int[] cellCounter;
     public int[] sortedParticleArray;
-    public List<int>[] hashTable;
-    public int[] displayHashTable;
+    public int[][] hashTable;
+    public int[] compactHashTable;
+    public int[][] compactArray;
+    public int[] numParticlesCompactArray;
+    public int[] countHashTable;
+    public int numHashTableEntries;
+    // public int[] displayHashTable;
     public long[,] cellZIndices;
     private int firstPrimeNumber = 73856093;
-    private int secondPrimeNumber = 19349663;
+    private int secondPrimeNumber = 83492791;
     private int hashTableLength;
+    private int compactHashTableLength;
     public bool parallelSearchActivated;
     public bool drawGridEnabled;
     private bool sortValues;
@@ -32,11 +39,53 @@ public class GridScript : MonoBehaviour
     void Start()
     {
         simulation = GameObject.FindGameObjectWithTag("Simulation").GetComponent<SimulationScript>();
+        // Decide size of grid according to the test scene
+        if (simulation.tests <= 3)
+        {
+            width = 200;
+            height = 200;
+        }
+        else if (simulation.tests == 4)
+        {
+            width = 250;
+            height = 250;
+        }
+        else if (simulation.tests == 5)
+        {
+            width = 600;
+            height = 600;
+        }
+        else if (simulation.tests == 6)
+        {
+            width = 1300;
+            height = 1300;
+        }
+        else if (simulation.tests == 7)
+        {
+            width = 1700;
+            height = 1700;
+        }
         grid = new List<int>[width, height];
         cellCounter = new int[(width * height * 2) + 1];
-        hashTable = new List<int>[width * height * 2];
+        hashTable = new int[width * height * 2][];
         hashTableLength = hashTable.Length;
-        displayHashTable = new int[hashTableLength];
+        for (int i = 0; i < hashTableLength; i++)
+        {
+            hashTable[i] = new int[numHashTableEntries];
+            for (int j = 0; j < numHashTableEntries; j++)
+            {
+                hashTable[i][j] = -1;
+            }
+        }
+        countHashTable = new int[hashTableLength];
+
+        // compact hashing
+        compactHashTable = new int[width * height * 2];
+        for (int i = 0; i < compactHashTable.Length; i++)
+        {
+            compactHashTable[i] = -1;
+        }
+
 
         // Precompute z-indices for all cells
         cellZIndices = new long[width, height];
@@ -56,10 +105,10 @@ public class GridScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        sortedParticleArray = simulation.particleArray.ToArray();
+        sortedParticleArray = simulation.particleArray;
         gridContent = grid[(int)gridPos.x, (int)gridPos.y];
 
-        countHashTableEntries();
+        // countHashTableEntries();
     }
 
     // Interleave to 64 bit
@@ -81,12 +130,12 @@ public class GridScript : MonoBehaviour
     }
 
     // Compute Z-Index for a position
-    // public long computeZIndexForPosition(Vector2 position)
-    // {
-    //     int CellX = (int)Mathf.Floor(position.x / cellSize);
-    //     int CellY = (int)Mathf.Floor(position.y / cellSize);
-    //     return interleave_uint32_with_zeros(CellX) | (interleave_uint32_with_zeros(CellY) << 1);
-    // }
+    public long computeZIndexForPosition(Vector2 position)
+    {
+        int CellX = (int)Mathf.Floor(position.x / cellSize);
+        int CellY = (int)Mathf.Floor(position.y / cellSize);
+        return interleave_uint32_with_zeros(CellX) | (interleave_uint32_with_zeros(CellY) << 1);
+    }
 
     // Returns the world coordinates 
     // in the upper right corner for our grid cell
@@ -104,12 +153,12 @@ public class GridScript : MonoBehaviour
     }
 
     // Returns the cell index of a world position
-    // public int computeCellIndex(Vector2 position)
-    // {
-    //     int CellX = (int)Mathf.Floor(position.x / cellSize);
-    //     int CellY = (int)Mathf.Floor(position.y / cellSize);
-    //     return CellX + CellY * height;
-    // }
+    public int computeCellIndex(Vector2 position)
+    {
+        int CellX = (int)Mathf.Floor(position.x / cellSize);
+        int CellY = (int)Mathf.Floor(position.y / cellSize);
+        return CellX + CellY * height;
+    }
 
     // Returns a unique cell identifier for a cell
     public long computeUniqueCellIndex(int CellX, int CellY)
@@ -147,26 +196,28 @@ public class GridScript : MonoBehaviour
                 Vector2 texThree = computeWorldCoords(x + 1, y);
                 if (drawGridEnabled)
                 {
-                    if (chooseNeighborSearch == 0)
-                    {
-                        TextMesh text = UtilsClass.CreateWorldText("(" + x + "," + y + ")", null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
-                        text.characterSize = 0.05f;
-                    }
-                    else if (chooseNeighborSearch == 1)
-                    {
-                        TextMesh text = UtilsClass.CreateWorldText(computeUniqueCellIndex(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
-                        text.characterSize = 0.05f;
-                    }
-                    else if (chooseNeighborSearch == 2)
-                    {
-                        TextMesh text = UtilsClass.CreateWorldText(computeZIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
-                        text.characterSize = 0.05f;
-                    }
-                    else if (chooseNeighborSearch == 3)
-                    {
-                        TextMesh text = UtilsClass.CreateWorldText(computeHashIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
-                        text.characterSize = 0.05f;
-                    }
+                    TextMesh text = UtilsClass.CreateWorldText(computeHashIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                    text.characterSize = 0.05f;
+                    // if (chooseNeighborSearch == 0)
+                    // {
+                    //     TextMesh text = UtilsClass.CreateWorldText("(" + x + "," + y + ")", null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                    //     text.characterSize = 0.05f;
+                    // }
+                    // else if (chooseNeighborSearch == 1)
+                    // {
+                    //     TextMesh text = UtilsClass.CreateWorldText(computeUniqueCellIndex(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                    //     text.characterSize = 0.05f;
+                    // }
+                    // else if (chooseNeighborSearch == 2)
+                    // {
+                    //     TextMesh text = UtilsClass.CreateWorldText(computeZIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                    //     text.characterSize = 0.05f;
+                    // }
+                    // else if (chooseNeighborSearch == 3)
+                    // {
+                    //     TextMesh text = UtilsClass.CreateWorldText(computeHashIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                    //     text.characterSize = 0.05f;
+                    // }
                     // TextMesh text = UtilsClass.CreateWorldText(Convert.ToString(computeZIndexForCell(x, y), 2), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
                 }
                 Debug.DrawLine(texOne, texTwo, Color.black, 1000f);
@@ -194,18 +245,25 @@ public class GridScript : MonoBehaviour
     {
         for (int i = 0; i < hashTableLength; i++)
         {
-            hashTable[i] = new List<int>();
+            for (int j = 0; j < numHashTableEntries; j++)
+            {
+                hashTable[i][j] = -1;
+            }
+        }
+        for (int i = 0; i < hashTableLength; i++)
+        {
+            countHashTable[i] = 0;
         }
     }
 
     // Count hash table entries
-    public void countHashTableEntries()
-    {
-        for (int i = 0; i < hashTableLength; i++)
-        {
-            displayHashTable[i] = hashTable[i].Count;
-        }
-    }
+    // public void countHashTableEntries()
+    // {
+    //     for (int i = 0; i < hashTableLength; i++)
+    //     {
+    //         displayHashTable[i] = hashTable[i].Count;
+    //     }
+    // }
 
     // Clear the cell counter array
     public void clearCellCounter()

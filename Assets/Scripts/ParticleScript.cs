@@ -9,7 +9,7 @@ public class ParticleScript : MonoBehaviour
     private SimulationScript simulation;
     private GridScript spatialGrid;
     public int particleNum;
-    public int particle;
+    public int particleIndex;
     public bool findParticle;
     public int searchParticle;
     public bool colorDensitys;
@@ -18,7 +18,7 @@ public class ParticleScript : MonoBehaviour
     public Vector2 gridCell;
     public int hashIndex;
     public Vector2 particlePosition;
-    public List<int> particleNeighbors;
+    public int[] particleNeighbors;
     public Vector2 particleVelocity;
     public int neighbor;
     public float kernel;
@@ -38,6 +38,8 @@ public class ParticleScript : MonoBehaviour
         spatialGrid = GameObject.FindGameObjectWithTag("Grid").GetComponent<GridScript>();
         // alpha = 5 / (14 * Mathf.PI * (simulation.particleSpacing * simulation.particleSpacing));
         alpha = 2.839606f;
+
+        particleNeighbors = new int[simulation.numParticleNeighbors];
     }
 
     // Update is called once per frame
@@ -48,37 +50,40 @@ public class ParticleScript : MonoBehaviour
 
         if (findParticle)
         {
-            particle = searchParticle;
+            particleIndex = searchParticle;
         }
         else
         {
-            particle = simulation.currentParticle;
+            particleIndex = simulation.currentParticle;
         }
-        particleNum = simulation.particleArray[particle];
+        particleNum = simulation.particleArray[particleIndex];
 
         gridCell = simulation.currentGridCell;
 
-        particleNeighbors = simulation.neighbors[particle];
-
-        if (simulation.moveParticles && simulation.positions.Count > 0)
+        for (int n = 0; n < simulation.numParticleNeighbors; n++)
         {
-            if (simulation.particleArray[particle] < simulation.numParticles)
+            particleNeighbors[n] = simulation.neighborsParticles[simulation.neighbors[particleIndex] + n];
+        }
+
+        if (simulation.moveParticles && simulation.positions.Length > 0)
+        {
+            if (simulation.particleArray[particleIndex] < simulation.numParticles)
             {
-                simulation.colorNeighbors(particle, Color.blue);
-                simulation.colorBoundaryNeighbors(particle, Color.black);
+                simulation.colorNeighbors(particleIndex, Color.blue);
+                simulation.colorBoundaryNeighbors(particleIndex, Color.black);
             }
         }
 
-        if (!simulation.moveParticles && simulation.positions.Count > 0)
+        if (!simulation.moveParticles && simulation.positions.Length > 0)
         {
 
-            particlePosition = simulation.positions[particle];
-            particleVelocity = simulation.velocitys[particle];
+            particlePosition = simulation.positions[particleIndex];
+            particleVelocity = simulation.velocitys[particleIndex];
 
             hashIndex = spatialGrid.computeHashIndex(particlePosition);
 
             // Reset particle color
-            if (previousParticle != particle)
+            if (previousParticle != particleIndex)
             {
                 if (simulation.particleArray[previousParticle] < simulation.numParticles)
                 {
@@ -88,32 +93,36 @@ public class ParticleScript : MonoBehaviour
             }
 
             // Compute kernels
-            kernel = simulation.smoothingKernel(simulation.positions[particle], simulation.positions[neighbor], simulation.particleSpacing);
-            kernelGradient = simulation.smoothingKernelDerivative(simulation.positions[particle], simulation.positions[neighbor], simulation.particleSpacing);
+            kernel = simulation.smoothingKernel(simulation.positions[particleIndex], simulation.positions[neighbor], simulation.particleSpacing);
+            kernelGradient = simulation.smoothingKernelDerivative(simulation.positions[particleIndex], simulation.positions[neighbor], simulation.particleSpacing);
 
             float kS = 0.0f;
             Vector2 gS = new Vector2(0, 0);
-            if (simulation.particleArray[particle] < simulation.numParticles)
+            if (simulation.particleArray[particleIndex] < simulation.numParticles)
             {
-                foreach (int p in simulation.neighbors[particle])
+                for (int n = 0; n < simulation.numParticleNeighbors; n++)
                 {
-                    kS += simulation.smoothingKernel(simulation.positions[particle], simulation.positions[p], simulation.particleSpacing);
-                    gS += simulation.smoothingKernelDerivative(simulation.positions[particle], simulation.positions[p], simulation.particleSpacing);
+                    int p = simulation.neighborsParticles[simulation.neighbors[particleIndex] + n];
+                    if (p >= 0)
+                    {
+                        kS += simulation.smoothingKernel(simulation.positions[particleIndex], simulation.positions[p], simulation.particleSpacing);
+                        gS += simulation.smoothingKernelDerivative(simulation.positions[particleIndex], simulation.positions[p], simulation.particleSpacing);
+                    }
                 }
                 kernelSum = kS;
                 kernelDerivativeSum = gS;
             }
 
             // density + pressure
-            density = simulation.densitys[particle];
-            pressure = simulation.pressures[particle];
+            density = simulation.densitys[particleIndex];
+            pressure = simulation.pressures[particleIndex];
 
             // Color particles
-            if (simulation.particleArray[particle] < simulation.numParticles)
+            if (simulation.particleArray[particleIndex] < simulation.numParticles)
             {
-                simulation.colorNeighbors(particle, Color.yellow);
-                simulation.colorBoundaryNeighbors(particle, Color.cyan);
-                simulation.colors[particle] = Color.red;
+                simulation.colorNeighbors(particleIndex, Color.yellow);
+                simulation.colorBoundaryNeighbors(particleIndex, Color.cyan);
+                simulation.colors[particleIndex] = Color.red;
             }
 
             int sumDensity = 0;
@@ -140,7 +149,7 @@ public class ParticleScript : MonoBehaviour
 
 
 
-            previousParticle = particle;
+            previousParticle = particleIndex;
         }
 
     }

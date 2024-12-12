@@ -6,7 +6,7 @@ public class DrawCirclesScript : MonoBehaviour
 {
 
     public ComputeShader shader;
-    public int texResolution = 2048;
+    public int texResolution;
 
     Renderer rend;
     RenderTexture outputTexture;

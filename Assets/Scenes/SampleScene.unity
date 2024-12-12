@@ -148,18 +148,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c8fa63d15bf2754ebc9eb7a3f4cc660, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 55
-  height: 55
+  width: 100
+  height: 100
   cellSize: 0.4
   gridPos: {x: 0, y: 0}
   gridContent: 
-  chooseNeighborSearch: 0
+  chooseNeighborSearch: 4
+  cellKeys: 
   cellCounter: 
   sortedParticleArray: 
-  displayHashTable: 
+  compactHashTable: 
+  numParticlesCompactArray: 
+  countHashTable: 
+  numHashTableEntries: 40
   parallelSearchActivated: 1
   drawGridEnabled: 0
-  randomInitializedParticles: 0
+  randomInitializedParticles: 1
 --- !u!4 &155552757
 Transform:
   m_ObjectHideFlags: 0
@@ -315,16 +319,16 @@ MonoBehaviour:
   colorParticles: 0
   countAvgDensity: 0
   countCFLConditions: 0
-  resetParticles: 0
+  resetParticles: 1
   borderOffset: 15
-  tests: 2
+  tests: 3
   tS: 0
   maxTS: 1000
   averageDensity: []
   cflConditions: []
   queryTimes: []
-  amountParticles: {x: 45, y: 95}
-  particlePosition: {x: 0.5, y: 0.5}
+  amountParticles: {x: 190, y: 190}
+  particlePosition: {x: 1.1, y: 1.1}
   particleStartSpacing: 0.2
   speedColor: 4
   alpha: 2.839606
@@ -333,6 +337,8 @@ MonoBehaviour:
   velocitys: []
   colors: []
   numNeighbors: 
+  neighbors: 
+  neighborsParticles: 
   densitys: []
   pressures: []
   forces: []
@@ -344,6 +350,7 @@ MonoBehaviour:
   v: 0.05
   numParticles: 0
   numBoundaries: 0
+  numParticleNeighbors: 40
   particleSize: 0
   particleMass: 0
   particleSpacing: 0
@@ -351,15 +358,11 @@ MonoBehaviour:
   startDensity: 1.5
   texResolution: 2048
   kernelSupportRadius: 0
-  constructionTime: 0
-  queryTime: 0
-  averageConstructionTime: 0
-  averageQueryTime: 0
-  averageTotalTime: 0
   sortedParticles: 
   sortedPositions: []
   sortedVelocitys: []
   sortedColors: []
+  sortedNeighbors: 
   sortedDensitys: []
   sortedPressures: []
   sortedForces: []
@@ -414,7 +417,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particleNum: 0
-  particle: 0
+  particleIndex: 0
   findParticle: 0
   searchParticle: 0
   colorDensitys: 0
@@ -434,6 +437,67 @@ MonoBehaviour:
   pressure: 0
   numPerfectDensitys: 0
   numPerfectPressure: 0
+--- !u!1 &1325355053
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1325355055}
+  - component: {fileID: 1325355054}
+  m_Layer: 0
+  m_Name: Measurements
+  m_TagString: Measurements
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1325355054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1325355053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e229685b2711404b986076c128b104a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  timeStep: 0
+  constructionTime: 0
+  queryTime: 0
+  averageConstructionTime: 0
+  averageQueryTime: 0
+  averageTotalTime: 0
+  simulationStep: 0
+  averageSimulationStep: 0
+  drawingTime: 0
+  averageDrawingTime: 0
+  updateTime: 0
+  averageUpdateTime: 0
+  averageDensityTime: 0
+  averagePressureTime: 0
+  averageNPForcesTime: 0
+  averagePressureForcesTime: 0
+  averageMoveParticlesTime: 0
+--- !u!4 &1325355055
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1325355053}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1984741414
 GameObject:
   m_ObjectHideFlags: 0
@@ -467,7 +531,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shader: {fileID: 7200000, guid: 9cb9bf8ee29f38c478747e7cd9c5c418, type: 3}
-  texResolution: 8192
+  texResolution: 4096
   clearColor: {r: 0.5597484, g: 0.55446774, b: 0.55446774, a: 0}
   total: 0
 --- !u!64 &1984741416
@@ -553,8 +617,8 @@ Transform:
   m_GameObject: {fileID: 1984741414}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 25, y: 25, z: 0}
-  m_LocalScale: {x: 50, y: 50, z: 1}
+  m_LocalPosition: {x: 50, y: 50, z: 0}
+  m_LocalScale: {x: 100, y: 100, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -568,3 +632,4 @@ SceneRoots:
   - {fileID: 155552757}
   - {fileID: 1984741419}
   - {fileID: 598455288}
+  - {fileID: 1325355055}

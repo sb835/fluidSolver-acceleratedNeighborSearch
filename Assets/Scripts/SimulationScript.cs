@@ -5,8 +5,8 @@ using System.IO;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System;
-
-// Start
+using Unity.VisualScripting;
+using UnityEngine.Scripting;
 
 public class SimulationScript : MonoBehaviour
 {
@@ -14,10 +14,9 @@ public class SimulationScript : MonoBehaviour
     public bool colorParticles = false;
     public bool countAvgDensity = false;
     public bool countCFLConditions = false;
-    public bool resetParticles = false;
+    public bool resetParticles = true;
     public float borderOffset = 3.0f;
     public int tests = 1;
-    private int counter = 0;
     private double sumConstructionTime = 0;
     private double sumQueryTime = 0;
     public int tS;
@@ -30,16 +29,18 @@ public class SimulationScript : MonoBehaviour
     public float particleStartSpacing;
     public float speedColor = 4.0f;
     public float alpha;
-    public List<int> particleArray;
-    public List<Vector2> positions;
-    public List<Vector2> velocitys;
-    public List<Color> colors;
+    public (int particleIndex, long cellIndex)[] particleHandles;
+    public int[] particleArray;
+    public Vector2[] positions;
+    public Vector2[] velocitys;
+    public Color[] colors;
     public int[] numNeighbors;
-    public List<int>[] neighbors;
-    public List<float> densitys;
-    public List<float> pressures;
-    public List<Vector2> forces;
-    public List<Vector2> nPForces;
+    public int[] neighbors;
+    public int[] neighborsParticles;
+    public float[] densitys;
+    public float[] pressures;
+    public Vector2[] forces;
+    public Vector2[] nPForces;
     public Vector2 maxVelocity = new Vector2(2, 9);
     public float timeStepMultiplyer = 0.9f;
     public float timeStep;
@@ -47,6 +48,7 @@ public class SimulationScript : MonoBehaviour
     public float v;
     public int numParticles;
     public int numBoundaries;
+    public int numParticleNeighbors;
     public float particleSize;
     public float particleMass;
     public float particleSpacing;
@@ -56,22 +58,19 @@ public class SimulationScript : MonoBehaviour
     private float quadWidth;
     private float quadHeight;
     public float kernelSupportRadius;
-    public double constructionTime;
-    public double queryTime;
-    public double averageConstructionTime;
-    public double averageQueryTime;
-    public double averageTotalTime;
+    public (int particleIndex, int cellIndex)[] sortedHandles;
     public int[] sortedParticles;
     public Vector2[] sortedPositions;
     public Vector2[] sortedVelocitys;
     public Color[] sortedColors;
-    public List<int>[] sortedNeighbors;
+    public int[] sortedNeighbors;
     public float[] sortedDensitys;
     public float[] sortedPressures;
     public Vector2[] sortedForces;
     public Vector2[] sortedNPForces;
     private DrawCirclesScript drawCirclesScript;
     private GridScript spatialGrid;
+    private MeasurementsScript measurements;
     public Camera mainCamera;
     private Vector2 mouse;
     private Vector2 start;
@@ -80,6 +79,23 @@ public class SimulationScript : MonoBehaviour
     private bool firstSortingDone;
     public long[,] cellZIndices;
     public bool doubleBorder;
+
+    private double sumSimulationStep;
+    private double sumDrawingTime;
+    private double sumUpdateTime;
+    private double sumDensityTime;
+    private double sumPressureTime;
+    private double sumNPForcesTime;
+    private double sumPressureForcesTime;
+    private double sumMoveParticlesTime;
+    private int watchCounter;
+    private double densityTime;
+    private double pressureTime;
+    private double NPForcesTime;
+    private double pressureForcesTime;
+    private double moveParticlesTime;
+    private int constructionCounter;
+
 
 
     // Forces
@@ -95,15 +111,19 @@ public class SimulationScript : MonoBehaviour
         // Initialize all values
         drawCirclesScript = GameObject.FindGameObjectWithTag("DrawCircle").GetComponent<DrawCirclesScript>();
         spatialGrid = GameObject.FindGameObjectWithTag("Grid").GetComponent<GridScript>();
-        texResolution = drawCirclesScript.texResolution;
-        quadWidth = drawCirclesScript.transform.localScale.x;
-        quadHeight = drawCirclesScript.transform.localScale.y;
+        measurements = GameObject.FindGameObjectWithTag("Measurements").GetComponent<MeasurementsScript>();
+
+
         particleSpacing = spatialGrid.cellSize / 2;
         particleVolume = particleSpacing * particleSpacing;
         particleMass = startDensity * particleVolume;
         particleSize = particleMass;
         kernelSupportRadius = particleSpacing * 2;
         firstSortingDone = false;
+
+        watchCounter = 1;
+        constructionCounter = 0;
+
 
         // Precompute z-indices for all cells
         cellZIndices = new long[spatialGrid.width, spatialGrid.height];
@@ -115,9 +135,71 @@ public class SimulationScript : MonoBehaviour
             }
         }
 
+        // Create array of particle CellIndices
+        for (int i = 0; i < numParticles + numBoundaries; i++)
+        {
+            spatialGrid.cellKeys[i] = spatialGrid.computeCellIndex(positions[i]);
+        }
+
         // Define boundaries of our simulation domain
         start = new Vector2(1, 1);
         boundaries = new Vector2(16, 9);
+
+        numParticles = (int)amountParticles.x * (int)amountParticles.y;
+        if (tests == 0)
+        {
+            numBoundaries = 910;
+        }
+        else if (tests == 1)
+        {
+            numBoundaries = 1862;
+        }
+        else if (tests == 2)
+        {
+            numBoundaries = 166 * 8;
+        }
+        else if (tests == 3)
+        {
+            numBoundaries = 4 * 332 + 4 * 623;
+        }
+        else if (tests == 4)
+        {
+            numBoundaries = 8 * 800;
+        }
+        else if (tests == 5)
+        {
+            numBoundaries = 4 * 1700 + 4 * 2000;
+        }
+
+        else if (tests == 6)
+        {
+            numBoundaries = 8 * 4000;
+        }
+
+        else if (tests == 7)
+        {
+            numBoundaries = 8 * 6000;
+        }
+
+        spatialGrid.cellKeys = new int[numParticles + numBoundaries];
+
+        particleHandles = new (int particleIndex, long cellIndex)[numParticles + numBoundaries];
+        particleArray = new int[numParticles + numBoundaries];
+        positions = new Vector2[numParticles + numBoundaries];
+        velocitys = new Vector2[numParticles + numBoundaries];
+        colors = new Color[numParticles + numBoundaries];
+        densitys = new float[numParticles + numBoundaries];
+        pressures = new float[numParticles + numBoundaries];
+        forces = new Vector2[numParticles + numBoundaries];
+        nPForces = new Vector2[numParticles + numBoundaries];
+
+        neighbors = new int[numParticles + numBoundaries];
+        int spaceforNeighbors = (numParticles + numBoundaries) * numParticleNeighbors;
+        neighborsParticles = new int[spaceforNeighbors];
+        for (int i = 0; i < spaceforNeighbors; i++)
+        {
+            neighborsParticles[i] = -1;
+        }
 
         initializeParticles(resetParticles, (int)amountParticles.x, (int)amountParticles.y, particlePosition, particleStartSpacing);
 
@@ -139,34 +221,87 @@ public class SimulationScript : MonoBehaviour
         // Initialize boundary particles
         if (tests == 0)
         {
-            initializeBorder(doubleBorder);
+            initializeBorder0(doubleBorder);
             initializeBorderWall(borderOffset, doubleBorder);
             mainCamera.orthographicSize = 5;
             mainCamera.transform.position = new Vector3(8.91f, 5, -10);
+
+            drawCirclesScript.transform.position = new Vector3(50, 50, 0);
+            drawCirclesScript.transform.localScale = new Vector3(100, 100, 0);
         }
         else if (tests == 1)
         {
             initializeBorder2();
             mainCamera.orthographicSize = 10;
             mainCamera.transform.position = new Vector3(12, 10, -10);
+
+            drawCirclesScript.transform.position = new Vector3(50, 50, 0);
+            drawCirclesScript.transform.localScale = new Vector3(100, 100, 0);
         }
 
         else if (tests == 2)
         {
-            initializeBorder3(doubleBorder);
+            initializeBorder(166, 166, 166, 166, true);
             mainCamera.orthographicSize = 10;
             mainCamera.transform.position = new Vector3(12, 10, -10);
+
+            drawCirclesScript.transform.position = new Vector3(50, 50, 0);
+            drawCirclesScript.transform.localScale = new Vector3(100, 100, 0);
         }
 
         else if (tests == 3)
         {
-            initializeBorder4(doubleBorder);
-            mainCamera.orthographicSize = 20;
-            mainCamera.transform.position = new Vector3(22, 20, -10);
+            initializeBorder(332, 332, 623, 623, true);
+            mainCamera.orthographicSize = 23;
+            mainCamera.transform.position = new Vector3(41f, 23, -10);
+
+            drawCirclesScript.transform.position = new Vector3(50, 50, 0);
+            drawCirclesScript.transform.localScale = new Vector3(100, 100, 0);
         }
 
-        neighbors = new List<int>[numParticles + numBoundaries];
-        numNeighbors = new int[numParticles + numBoundaries];
+        else if (tests == 4)
+        {
+            initializeBorder(800, 800, 800, 800, true);
+            mainCamera.orthographicSize = 40;
+            mainCamera.transform.position = new Vector3(50, 40, -10);
+
+            drawCirclesScript.transform.position = new Vector3(50, 50, 0);
+            drawCirclesScript.transform.localScale = new Vector3(100, 100, 0);
+        }
+
+        else if (tests == 5)
+        {
+            initializeBorder(1700, 1700, 2000, 2000, true);
+            mainCamera.orthographicSize = 120;
+            mainCamera.transform.position = new Vector3(155, 120, -10);
+
+            drawCirclesScript.transform.position = new Vector3(250, 250, 0);
+            drawCirclesScript.transform.localScale = new Vector3(500, 500, 0);
+        }
+
+        else if (tests == 6)
+        {
+            initializeBorder(4000, 4000, 4000, 4000, true);
+            mainCamera.orthographicSize = 220;
+            mainCamera.transform.position = new Vector3(280, 220, -10);
+
+            drawCirclesScript.transform.position = new Vector3(250, 250, 0);
+            drawCirclesScript.transform.localScale = new Vector3(500, 500, 0);
+        }
+
+        else if (tests == 7)
+        {
+            initializeBorder(6000, 6000, 6000, 6000, true);
+            mainCamera.orthographicSize = 220;
+            mainCamera.transform.position = new Vector3(280, 220, -10);
+
+            drawCirclesScript.transform.position = new Vector3(350, 350, 0);
+            drawCirclesScript.transform.localScale = new Vector3(700, 700, 0);
+        }
+
+        texResolution = drawCirclesScript.texResolution;
+        quadWidth = drawCirclesScript.transform.localScale.x;
+        quadHeight = drawCirclesScript.transform.localScale.y;
 
         // Inform the shader about the total amount of drawn particles
         drawCirclesScript.total = numParticles + numBoundaries;
@@ -179,22 +314,12 @@ public class SimulationScript : MonoBehaviour
 
         previousBorderOffset = borderOffset;
 
-        // IMPORTANT!!!!
-        // sortedParticles = new List<int>(particleArray);
-        // sortedPositions = new List<Vector2>(positions);
-        // sortedVelocitys = new List<Vector2>(velocitys);
-        // sortedColors = new List<Color>(colors);
-        // sortedNeighbors = new List<List<int>>(neighbors).ToArray();
-        // sortedDensitys = new List<float>(densitys);
-        // sortedPressures = new List<float>(pressures);
-        // sortedForces = new List<Vector2>(forces);
-        // sortedNPForces = new List<Vector2>(nPForces);
-
+        sortedHandles = new (int particleIndex, int cellIndex)[numParticles + numBoundaries];
         sortedParticles = new int[numParticles + numBoundaries];
         sortedPositions = new Vector2[numParticles + numBoundaries];
         sortedVelocitys = new Vector2[numParticles + numBoundaries];
         sortedColors = new Color[numParticles + numBoundaries];
-        sortedNeighbors = new List<int>[numParticles + numBoundaries];
+        sortedNeighbors = new int[numParticles + numBoundaries];
         sortedDensitys = new float[numParticles + numBoundaries];
         sortedPressures = new float[numParticles + numBoundaries];
         sortedForces = new Vector2[numParticles + numBoundaries];
@@ -203,14 +328,23 @@ public class SimulationScript : MonoBehaviour
     }
     void ResetValues()
     {
-        particleArray = new List<int>();
-        positions = new List<Vector2>();
-        velocitys = new List<Vector2>();
-        colors = new List<Color>();
-        densitys = new List<float>();
-        pressures = new List<float>();
-        forces = new List<Vector2>();
-        nPForces = new List<Vector2>();
+        particleHandles = new (int particleIndex, long cellIndex)[numParticles + numBoundaries];
+        particleArray = new int[numParticles + numBoundaries];
+        positions = new Vector2[numParticles + numBoundaries];
+        velocitys = new Vector2[numParticles + numBoundaries];
+        colors = new Color[numParticles + numBoundaries];
+        densitys = new float[numParticles + numBoundaries];
+        pressures = new float[numParticles + numBoundaries];
+        forces = new Vector2[numParticles + numBoundaries];
+        nPForces = new Vector2[numParticles + numBoundaries];
+
+        neighbors = new int[numParticles + numBoundaries];
+        int spaceforNeighbors = (numParticles + numBoundaries) * numParticleNeighbors;
+        neighborsParticles = new int[spaceforNeighbors];
+        for (int i = 0; i < spaceforNeighbors; i++)
+        {
+            neighborsParticles[i] = -1;
+        }
     }
 
     void initializeParticles(bool reset, int numX, int numY, Vector2 start, float spacing)
@@ -223,23 +357,52 @@ public class SimulationScript : MonoBehaviour
         }
         else
         {
-            // particleArray.RemoveRange(numParticles, numBoundaries);
-            positions = removeBoundarysVector2(positions);
-            // positions.RemoveRange(numParticles, numBoundaries);
-            colors = removeBoundarysColors(colors);
-            // colors.RemoveRange(numParticles, numBoundaries);
-            velocitys = removeBoundarysVector2(velocitys);
-            // velocitys.RemoveRange(numParticles, numBoundaries);
-            densitys = removeBoundarysFloat(densitys);
-            // densitys.RemoveRange(numParticles, numBoundaries);
-            pressures = removeBoundarysFloat(pressures);
-            // pressures.RemoveRange(numParticles, numBoundaries);
-            forces = removeBoundarysVector2(forces);
-            // forces.RemoveRange(numParticles, numBoundaries);
-            nPForces = removeBoundarysVector2(nPForces);
-            // nPForces.RemoveRange(numParticles, numBoundaries);
-            // Initialize boundary particles
-            particleArray = removeBoundarysInt(particleArray);
+            // allocate new memory
+            int newFluidParticles = numX * numY;
+            int lengthNewArrays = numParticles + numBoundaries + newFluidParticles;
+            List<int> newParticles = new List<int>();
+            List<Vector2> newPositions = new List<Vector2>();
+            List<Vector2> newVelocitys = new List<Vector2>();
+            List<Color> newColors = new List<Color>();
+            List<float> newDensitys = new List<float>();
+            List<float> newPressures = new List<float>();
+            List<Vector2> newForces = new List<Vector2>();
+            List<Vector2> newNPForces = new List<Vector2>();
+
+            // Insert old fluid particles
+            for (int j = 0; j < numParticles + numBoundaries; j++)
+            {
+                int i = particleHandles[j].particleIndex;
+                if (particleArray[i] < numParticles)
+                {
+                    newParticles.Add(particleArray[i]);
+                    newPositions.Add(positions[i]);
+                    newVelocitys.Add(velocitys[i]);
+                    newColors.Add(colors[i]);
+                    newDensitys.Add(densitys[i]);
+                    newPressures.Add(pressures[i]);
+                    newForces.Add(forces[i]);
+                    newNPForces.Add(nPForces[i]);
+                }
+            }
+
+            particleArray = new int[lengthNewArrays];
+            newParticles.CopyTo(particleArray, 0);
+            positions = new Vector2[lengthNewArrays];
+            newPositions.CopyTo(positions, 0);
+            velocitys = new Vector2[lengthNewArrays];
+            newVelocitys.CopyTo(velocitys, 0);
+            colors = new Color[lengthNewArrays];
+            newColors.CopyTo(colors, 0);
+            densitys = new float[lengthNewArrays];
+            newDensitys.CopyTo(densitys, 0);
+            pressures = new float[lengthNewArrays];
+            newPressures.CopyTo(pressures, 0);
+            forces = new Vector2[lengthNewArrays];
+            newForces.CopyTo(forces, 0);
+            nPForces = new Vector2[lengthNewArrays];
+            newNPForces.CopyTo(nPForces, 0);
+
             numBoundaries = 0;
         }
         for (int x = 0; x < numX; x++)
@@ -252,7 +415,104 @@ public class SimulationScript : MonoBehaviour
             }
         }
     }
-    void initializeBorder(bool doubleBorder)
+
+    void initializeBorder(int leftLength, int rightLength, int topLength, int bottomLength, bool doubleBorder)
+    {
+        // Box
+        // Down
+        float x = 0.0f + particleSize;
+        float y = 0.0f + particleSize;
+        for (int i = 0; i < bottomLength; i++)
+        {
+            InitBoundaryParticle(new Vector2(x, y));
+
+            x += 2 * particleSize;
+        }
+
+        // Double
+        if (doubleBorder)
+        {
+            x = 0.0f + particleSize;
+            y = 0.0f + 3 * particleSize;
+            for (int i = 0; i < bottomLength; i++)
+            {
+                InitBoundaryParticle(new Vector2(x, y));
+
+                x += 2 * particleSize;
+            }
+        }
+
+        // Top
+        x = 0.0f - particleSize;
+        y = (leftLength * 2 * particleSize) + particleSize;
+        for (int i = 0; i < topLength; i++)
+        {
+            InitBoundaryParticle(new Vector2(x, y));
+
+            x += 2 * particleSize;
+        }
+
+        // Double
+        if (doubleBorder)
+        {
+            x = 0.0f - particleSize;
+            y = (leftLength * 2 * particleSize) + 3 * particleSize;
+            for (int i = 0; i < topLength; i++)
+            {
+                InitBoundaryParticle(new Vector2(x, y));
+
+                x += 2 * particleSize;
+            }
+        }
+
+        // Left
+        x = 0.0f + particleSize;
+        y = 0.0f + 5 * particleSize;
+        for (int i = 0; i < leftLength; i++)
+        {
+            InitBoundaryParticle(new Vector2(x, y));
+
+            y += 2 * particleSize;
+        }
+
+        // Double
+        if (doubleBorder)
+        {
+            x = 0.0f + 3 * particleSize;
+            y = 0.0f + 5 * particleSize;
+            for (int i = 0; i < leftLength; i++)
+            {
+                InitBoundaryParticle(new Vector2(x, y));
+
+                y += 2 * particleSize;
+            }
+        }
+
+        // Right
+        x = (bottomLength * 2 * particleSize) - 3 * particleSize;
+        y = 0.0f + 5 * particleSize;
+        for (int i = 0; i < rightLength; i++)
+        {
+            InitBoundaryParticle(new Vector2(x, y));
+
+            y += 2 * particleSize;
+        }
+
+        // Double
+        if (doubleBorder)
+        {
+            x = (bottomLength * 2 * particleSize) - particleSize;
+            y = 0.0f + 5 * particleSize;
+            for (int i = 0; i < rightLength; i++)
+            {
+                InitBoundaryParticle(new Vector2(x, y));
+
+                y += 2 * particleSize;
+            }
+        }
+    }
+
+    void initializeBorder0(bool doubleBorder)
     {
         // boundaryPositions = new List<Vector2>();
         // boundaryColors = new List<Color>();
@@ -513,198 +773,6 @@ public class SimulationScript : MonoBehaviour
         }
 
     }
-
-    void initializeBorder3(bool doubleBorder)
-    {
-        // Box
-        // Down
-        float x = 0.0f + particleSize;
-        float y = 0.0f + particleSize;
-        for (int i = 0; i < 166; i++)
-        {
-            InitBoundaryParticle(new Vector2(x, y));
-
-            x += 2 * particleSize;
-        }
-
-        // Double
-        if (doubleBorder)
-        {
-            x = 0.0f + particleSize;
-            y = 0.0f + 3 * particleSize;
-            for (int i = 0; i < 166; i++)
-            {
-                InitBoundaryParticle(new Vector2(x, y));
-
-                x += 2 * particleSize;
-            }
-        }
-
-        // Top
-        x = 0.0f - particleSize;
-        y = 20.0f - particleSize;
-        for (int i = 0; i < 166; i++)
-        {
-            InitBoundaryParticle(new Vector2(x, y));
-
-            x += 2 * particleSize;
-        }
-
-        // Double
-        if (doubleBorder)
-        {
-            x = 0.0f - particleSize;
-            y = 20.0f - 3 * particleSize;
-            for (int i = 0; i < 166; i++)
-            {
-                InitBoundaryParticle(new Vector2(x, y));
-
-                x += 2 * particleSize;
-            }
-        }
-
-        // Left
-        x = 0.0f + particleSize;
-        y = 0.0f + 4 * particleSize;
-        for (int i = 0; i < 164; i++)
-        {
-            InitBoundaryParticle(new Vector2(x, y));
-
-            y += 2 * particleSize;
-        }
-
-        // Double
-        if (doubleBorder)
-        {
-            x = 0.0f + 3 * particleSize;
-            y = 0.0f + 5 * particleSize;
-            for (int i = 0; i < 163; i++)
-            {
-                InitBoundaryParticle(new Vector2(x, y));
-
-                y += 2 * particleSize;
-            }
-        }
-
-        // Right
-        x = 20.0f - 2 * particleSize;
-        y = 0.0f + 4 * particleSize;
-        for (int i = 0; i < 164; i++)
-        {
-            InitBoundaryParticle(new Vector2(x, y));
-
-            y += 2 * particleSize;
-        }
-
-        // Double
-        if (doubleBorder)
-        {
-            x = 20.0f - 4 * particleSize;
-            y = 0.0f + 5 * particleSize;
-            for (int i = 0; i < 163; i++)
-            {
-                InitBoundaryParticle(new Vector2(x, y));
-
-                y += 2 * particleSize;
-            }
-        }
-    }
-
-    void initializeBorder4(bool doubleBorder)
-    {
-        // Box
-        // Down
-        float x = 0.0f + particleSize;
-        float y = 0.0f + particleSize;
-        for (int i = 0; i < 332; i++)
-        {
-            InitBoundaryParticle(new Vector2(x, y));
-
-            x += 2 * particleSize;
-        }
-
-        // Double
-        if (doubleBorder)
-        {
-            x = 0.0f + particleSize;
-            y = 0.0f + 3 * particleSize;
-            for (int i = 0; i < 332; i++)
-            {
-                InitBoundaryParticle(new Vector2(x, y));
-
-                x += 2 * particleSize;
-            }
-        }
-
-        // Top
-        x = 0.0f - particleSize;
-        y = 40.0f - particleSize;
-        for (int i = 0; i < 332; i++)
-        {
-            InitBoundaryParticle(new Vector2(x, y));
-
-            x += 2 * particleSize;
-        }
-
-        // Double
-        if (doubleBorder)
-        {
-            x = 0.0f - particleSize;
-            y = 40.0f - 3 * particleSize;
-            for (int i = 0; i < 332; i++)
-            {
-                InitBoundaryParticle(new Vector2(x, y));
-
-                x += 2 * particleSize;
-            }
-        }
-
-        // Left
-        x = 0.0f + particleSize;
-        y = 0.0f + 4 * particleSize;
-        for (int i = 0; i < 332; i++)
-        {
-            InitBoundaryParticle(new Vector2(x, y));
-
-            y += 2 * particleSize;
-        }
-
-        // Double
-        if (doubleBorder)
-        {
-            x = 0.0f + 3 * particleSize;
-            y = 0.0f + 5 * particleSize;
-            for (int i = 0; i < 332; i++)
-            {
-                InitBoundaryParticle(new Vector2(x, y));
-
-                y += 2 * particleSize;
-            }
-        }
-
-        // Right
-        x = 40.0f - 2 * particleSize;
-        y = 0.0f + 4 * particleSize;
-        for (int i = 0; i < 332; i++)
-        {
-            InitBoundaryParticle(new Vector2(x, y));
-
-            y += 2 * particleSize;
-        }
-
-        // Double
-        if (doubleBorder)
-        {
-            x = 40.0f - 4 * particleSize;
-            y = 0.0f + 5 * particleSize;
-            for (int i = 0; i < 332; i++)
-            {
-                InitBoundaryParticle(new Vector2(x, y));
-
-                y += 2 * particleSize;
-            }
-        }
-    }
     void initializeBorderWall(float xOffset, bool exists)
     {
         if (exists)
@@ -730,8 +798,9 @@ public class SimulationScript : MonoBehaviour
 
         // Add the number of each particle in the respective grid cell
         // iterate one time over all particles
-        for (int i = 0; i < numParticles + numBoundaries; i++)
+        for (int j = 0; j < numParticles + numBoundaries; j++)
         {
+            int i = particleHandles[j].particleIndex;
             Vector2 gridCoords = spatialGrid.computeCellPosition(positions[i]);
             if (spatialGrid.isValidCell(gridCoords))
             {
@@ -740,18 +809,49 @@ public class SimulationScript : MonoBehaviour
         }
     }
 
+    void constructionIndexSort2()
+    {
+        // sort particle attributes
+        Array.Sort(spatialGrid.cellKeys, particleArray);
+        Array.Sort(spatialGrid.cellKeys, positions);
+        Array.Sort(spatialGrid.cellKeys, velocitys);
+        Array.Sort(spatialGrid.cellKeys, colors);
+        Array.Sort(spatialGrid.cellKeys, neighbors);
+        Array.Sort(spatialGrid.cellKeys, densitys);
+        Array.Sort(spatialGrid.cellKeys, pressures);
+        Array.Sort(spatialGrid.cellKeys, forces);
+        Array.Sort(spatialGrid.cellKeys, nPForces);
 
+        // Create array of particle CellIndices
+        // for (int i = 0; i < numParticles + numBoundaries; i++)
+        // {
+        //     spatialGrid.cellKeys[i] = spatialGrid.computeCellIndex(positions[i]);
+        // }
+    }
     void constructionIndexSort()
     {
+        // // Create handles
+        // for (int i = 0; i < numParticles + numBoundaries; i++)
+        // {
+        //     particleHandles[i].particleIndex = i;
+        //     particleHandles[i].cellIndex = spatialGrid.computeCellIndex(positions[i]);
+        // }
+
+        // // Sort handles
+        // Array.Sort(particleHandles);
+
+
         if (moveParticles || !firstSortingDone)
         {
+            constructionCounter = 0;
             firstSortingDone = true;
             // Clear cell counter
             spatialGrid.clearCellCounter();
 
             // Compute cell indices for particles and increment counter in C
-            for (int i = 0; i < numParticles + numBoundaries; i++)
+            for (int j = 0; j < numParticles + numBoundaries; j++)
             {
+                int i = particleHandles[j].particleIndex;
                 Vector2 gridCoords = spatialGrid.computeCellPosition(positions[i]);
                 if (spatialGrid.isValidCell(gridCoords))
                 {
@@ -768,15 +868,17 @@ public class SimulationScript : MonoBehaviour
                 spatialGrid.cellCounter[i] = accum;
             }
 
+
             // Create sorted particle array
-            // For fluid particle
-            for (int i = 0; i < numParticles + numBoundaries; i++)
+            for (int j = 0; j < numParticles + numBoundaries; j++)
             {
+                int i = particleHandles[j].particleIndex;
                 Vector2 gridCoords = spatialGrid.computeCellPosition(positions[i]);
                 if (spatialGrid.isValidCell(gridCoords))
                 {
                     long cellIndex = spatialGrid.computeUniqueCellIndex((int)gridCoords.x, (int)gridCoords.y);
                     int index = spatialGrid.cellCounter[cellIndex] - 1;
+
                     sortedParticles[index] = particleArray[i];
                     sortedPositions[index] = positions[i];
                     sortedVelocitys[index] = velocitys[i];
@@ -790,29 +892,44 @@ public class SimulationScript : MonoBehaviour
                 }
             }
 
-            particleArray = new List<int>(sortedParticles);
-            positions = new List<Vector2>(sortedPositions);
-            velocitys = new List<Vector2>(sortedVelocitys);
-            colors = new List<Color>(sortedColors);
-            neighbors = new List<List<int>>(sortedNeighbors).ToArray();
-            densitys = new List<float>(sortedDensitys);
-            pressures = new List<float>(sortedPressures);
-            forces = new List<Vector2>(sortedForces);
-            nPForces = new List<Vector2>(sortedNPForces);
+            particleArray = new List<int>(sortedParticles).ToArray();
+            positions = new List<Vector2>(sortedPositions).ToArray();
+            velocitys = new List<Vector2>(sortedVelocitys).ToArray();
+            colors = new List<Color>(sortedColors).ToArray();
+            neighbors = new List<int>(sortedNeighbors).ToArray();
+            densitys = new List<float>(sortedDensitys).ToArray();
+            pressures = new List<float>(sortedPressures).ToArray();
+            forces = new List<Vector2>(sortedForces).ToArray();
+            nPForces = new List<Vector2>(sortedNPForces).ToArray();
         }
     }
 
     void constructionZIndexSort()
     {
+        // // Create handles
+        // for (int i = 0; i < numParticles + numBoundaries; i++)
+        // {
+        //     particleHandles[i].particleIndex = i;
+        //     particleHandles[i].cellIndex = spatialGrid.computeZIndexForPosition(positions[i]);
+        // }
+
+        // // Sort handles
+        // Array.Sort(particleHandles);
+
         if (moveParticles || !firstSortingDone)
         {
+            // constructionCounter++;
+            // if (constructionCounter == 5)
+            // {
+            // constructionCounter = 0;
             firstSortingDone = true;
             // Clear cell counter
             spatialGrid.clearCellCounter();
 
             // Compute cell indices for particles and increment counter in C
-            for (int i = 0; i < numParticles + numBoundaries; i++)
+            for (int j = 0; j < numParticles + numBoundaries; j++)
             {
+                int i = particleHandles[j].particleIndex;
                 Vector2 gridCoords = spatialGrid.computeCellPosition(positions[i]);
                 if (spatialGrid.isValidCell(gridCoords))
                 {
@@ -831,8 +948,9 @@ public class SimulationScript : MonoBehaviour
 
             // Create sorted particle array
             // For fluid particle
-            for (int i = 0; i < numParticles + numBoundaries; i++)
+            for (int j = 0; j < numParticles + numBoundaries; j++)
             {
+                int i = particleHandles[j].particleIndex;
                 Vector2 gridCoords = spatialGrid.computeCellPosition(positions[i]);
                 if (spatialGrid.isValidCell(gridCoords))
                 {
@@ -851,16 +969,17 @@ public class SimulationScript : MonoBehaviour
                 }
             }
 
-            particleArray = new List<int>(sortedParticles);
-            positions = new List<Vector2>(sortedPositions);
-            velocitys = new List<Vector2>(sortedVelocitys);
-            colors = new List<Color>(sortedColors);
-            neighbors = new List<List<int>>(sortedNeighbors).ToArray();
-            densitys = new List<float>(sortedDensitys);
-            pressures = new List<float>(sortedPressures);
-            forces = new List<Vector2>(sortedForces);
-            nPForces = new List<Vector2>(sortedNPForces);
+            particleArray = new List<int>(sortedParticles).ToArray();
+            positions = new List<Vector2>(sortedPositions).ToArray();
+            velocitys = new List<Vector2>(sortedVelocitys).ToArray();
+            colors = new List<Color>(sortedColors).ToArray();
+            neighbors = new List<int>(sortedNeighbors).ToArray();
+            densitys = new List<float>(sortedDensitys).ToArray();
+            pressures = new List<float>(sortedPressures).ToArray();
+            forces = new List<Vector2>(sortedForces).ToArray();
+            nPForces = new List<Vector2>(sortedNPForces).ToArray();
         }
+        // }
     }
     void constructionSpatialHashing()
     {
@@ -873,23 +992,111 @@ public class SimulationScript : MonoBehaviour
         for (int i = 0; i < numParticles + numBoundaries; i++)
         {
             int hashIndex = spatialGrid.computeHashIndex(positions[i]);
-            spatialGrid.hashTable[hashIndex].Add(i);
+            spatialGrid.hashTable[hashIndex][spatialGrid.countHashTable[hashIndex]] = i;
+            spatialGrid.countHashTable[hashIndex]++;
+        }
+    }
+
+    void constructionCompactHashing()
+    {
+        // // Create handles
+        // for (int i = 0; i < numParticles + numBoundaries; i++)
+        // {
+        //     particleHandles[i].particleIndex = i;
+        //     particleHandles[i].cellIndex = spatialGrid.computeZIndexForPosition(positions[i]);
+        // }
+
+        // // Sort handles
+        // Array.Sort(particleHandles);
+
+        // clear countHashTable
+        for (int i = 0; i < spatialGrid.countHashTable.Length; i++)
+        {
+            spatialGrid.countHashTable[i] = 0;
+        }
+        // Compute number of filled cells
+        for (int j = 0; j < numParticles + numBoundaries; j++)
+        {
+            int i = particleHandles[j].particleIndex;
+            int hashIndex = spatialGrid.computeHashIndex(positions[i]);
+            spatialGrid.countHashTable[hashIndex]++;
+        }
+        int usedCells = 0;
+        for (int i = 0; i < spatialGrid.countHashTable.Length; i++)
+        {
+            if (spatialGrid.countHashTable[i] > 0)
+            {
+                usedCells++;
+            }
+        }
+        //Initialize compact array
+        spatialGrid.compactArray = new int[usedCells][];
+        for (int i = 0; i < usedCells; i++)
+        {
+            spatialGrid.compactArray[i] = new int[spatialGrid.numHashTableEntries];
+            for (int j = 0; j < spatialGrid.numHashTableEntries; j++)
+            {
+                spatialGrid.compactArray[i][j] = -1;
+            }
+        }
+        spatialGrid.compactHashTable = new int[spatialGrid.width * spatialGrid.height * 2];
+        for (int i = 0; i < spatialGrid.compactHashTable.Length; i++)
+        {
+            spatialGrid.compactHashTable[i] = -1;
+        }
+
+        // Count compact array entries
+        int compactArrayEntries = 0;
+        // Construct array that counts already inserted particles
+        spatialGrid.numParticlesCompactArray = new int[usedCells];
+        // Insert all particles in compact array
+
+        for (int j = 0; j < numParticles + numBoundaries; j++)
+        {
+            int i = particleHandles[j].particleIndex;
+            // Compute hash index of particle
+            int hashIndex = spatialGrid.computeHashIndex(positions[i]);
+            int compactCell = spatialGrid.compactHashTable[hashIndex];
+            // Check if cell at that hash index is empty
+            if (compactCell == -1)
+            {
+                // Add reference to cell array into hash table
+                spatialGrid.compactHashTable[hashIndex] = compactArrayEntries;
+                // Insert particle at reference
+                compactCell = spatialGrid.compactHashTable[hashIndex];
+                spatialGrid.compactArray[compactCell][spatialGrid.numParticlesCompactArray[compactCell]] = i; //<----
+                spatialGrid.numParticlesCompactArray[compactCell]++;
+                compactArrayEntries++;
+            }
+            else
+            {
+                spatialGrid.compactArray[compactCell][spatialGrid.numParticlesCompactArray[compactCell]] = i;
+                spatialGrid.numParticlesCompactArray[compactCell]++;
+            }
         }
     }
     // Query Methods
     // query means quering through our potential neighbors and finding real neighbors
+
+    void quadraticSearch()
+    {
+        for (int i = 0; i < numParticles + numBoundaries; i++)
+        {
+            if (particleArray[i] < numParticles)
+            {
+                findNeighborsQuadraticSearch(i);
+            }
+        };
+    }
+
     void queryGrid()
     {
         // Find all neighbors for each particle
         if (spatialGrid.parallelSearchActivated)
         {
-            //Limiting the maximum degree of parallelism to 8
-            var options = new ParallelOptions()
+            Parallel.For(0, numParticles + numBoundaries, j =>
             {
-                MaxDegreeOfParallelism = -1
-            };
-            Parallel.For(0, numParticles + numBoundaries, options, i =>
-            {
+                int i = particleHandles[j].particleIndex;
                 if (particleArray[i] < numParticles)
                 {
                     findNeighbors(i);
@@ -913,12 +1120,9 @@ public class SimulationScript : MonoBehaviour
         if (spatialGrid.parallelSearchActivated)
         {
             //Limiting the maximum degree of parallelism to 8
-            var options = new ParallelOptions()
+            Parallel.For(0, numParticles + numBoundaries, j =>
             {
-                MaxDegreeOfParallelism = -1
-            };
-            Parallel.For(0, numParticles + numBoundaries, options, i =>
-            {
+                int i = particleHandles[j].particleIndex;
                 if (particleArray[i] < numParticles)
                 {
                     findNeighborsIndexSort(i);
@@ -937,18 +1141,33 @@ public class SimulationScript : MonoBehaviour
         }
     }
 
+    void queryIndexSort2()
+    {
+        // Find all neighbors for each particle
+        if (spatialGrid.parallelSearchActivated)
+        {
+            Parallel.For(0, spatialGrid.cellCounter.Length - 1, i =>
+            {
+                findNeighborsIndexSort2(i);
+            });
+        }
+        else
+        {
+            for (int i = 0; i < spatialGrid.cellCounter.Length - 1; i++)
+            {
+                findNeighborsIndexSort2(i);
+            };
+        }
+    }
+
     void queryZIndexSort()
     {
         // Find all neighbors for each particle
         if (spatialGrid.parallelSearchActivated)
         {
-            //Limiting the maximum degree of parallelism to 8
-            var options = new ParallelOptions()
+            Parallel.For(0, numParticles + numBoundaries, j =>
             {
-                MaxDegreeOfParallelism = -1
-            };
-            Parallel.For(0, numParticles + numBoundaries, options, i =>
-            {
+                int i = particleHandles[j].particleIndex;
                 if (particleArray[i] < numParticles)
                 {
                     findNeighborsZIndexSort(i);
@@ -972,12 +1191,7 @@ public class SimulationScript : MonoBehaviour
         // Find all neighbors for each particle
         if (spatialGrid.parallelSearchActivated)
         {
-            //Limiting the maximum degree of parallelism to 8
-            var options = new ParallelOptions()
-            {
-                MaxDegreeOfParallelism = -1
-            };
-            Parallel.For(0, numParticles + numBoundaries, options, i =>
+            Parallel.For(0, numParticles + numBoundaries, i =>
             {
                 if (particleArray[i] < numParticles)
                 {
@@ -997,10 +1211,77 @@ public class SimulationScript : MonoBehaviour
         }
     }
 
+    void queryHashTable2()
+    {
+        // Find all neighbors for each particle
+        if (spatialGrid.parallelSearchActivated)
+        {
+            Parallel.For(0, spatialGrid.hashTable.Length, i =>
+            {
+                findNeighborsSpatialHashing2(i);
+            });
+        }
+        else
+        {
+            for (int i = 0; i < spatialGrid.hashTable.Length; i++)
+            {
+                findNeighborsSpatialHashing2(i);
+            };
+        }
+    }
+
+    void queryCompactHashTable()
+    {
+        // Find all neighbors for each particle
+        if (spatialGrid.parallelSearchActivated)
+        {
+            Parallel.For(0, spatialGrid.compactArray.Length, j =>
+            {
+                int i = particleHandles[j].particleIndex;
+                findNeighborsCompactHashing(i);
+            });
+        }
+        else
+        {
+            for (int i = 0; i < spatialGrid.compactArray.Length; i++)
+            {
+                findNeighborsCompactHashing(i);
+            };
+        }
+    }
+
     // Neighbor search
+
+    private void findNeighborsQuadraticSearch(int i)
+    {
+        // Clear all neighbors
+        for (int n = 0; n < numParticleNeighbors; n++)
+        {
+            neighborsParticles[neighbors[i] + n] = -1;
+        }
+        // Initialize counter
+        int counter = 0;
+        for (int j = 0; j < numParticles + numBoundaries; j++)
+        {
+            if (Vector2.Distance(positions[i], positions[j]) < kernelSupportRadius)
+            {
+                // n.Add(j);
+                neighborsParticles[neighbors[i] + counter] = j;
+                counter++;
+            }
+        }
+        // neighbors[i] = n;
+    }
+
     private void findNeighbors(int i)
     {
-        List<int> n = new List<int>();
+        // Clear all neighbors
+        for (int n = 0; n < numParticleNeighbors; n++)
+        {
+            neighborsParticles[neighbors[i] + n] = -1;
+        }
+        // Initialize counter
+        int counter = 0;
         Vector2 gridCell = spatialGrid.computeCellPosition(positions[i]);
         for (int x = -1; x <= 1; x++)
         {
@@ -1022,18 +1303,26 @@ public class SimulationScript : MonoBehaviour
                     {
                         if (Vector2.Distance(positions[i], positions[potentialNeighbors[j]]) < kernelSupportRadius)
                         {
-                            n.Add(potentialNeighbors[j]);
+                            // n.Add(potentialNeighbors[j]);
+                            neighborsParticles[neighbors[i] + counter] = potentialNeighbors[j];
+                            counter++;
                         }
                     }
                 }
             }
         }
-        neighbors[i] = n;
+        // neighbors[i] = n;
     }
 
     void findNeighborsIndexSort(int i)
     {
-        List<int> n = new List<int>();
+        // Clear all neighbors
+        for (int n = 0; n < numParticleNeighbors; n++)
+        {
+            neighborsParticles[neighbors[i] + n] = -1;
+        }
+        // Initialize counter
+        int counter = 0;
         Vector2 gridCell = spatialGrid.computeCellPosition(positions[i]);
         for (int x = -1; x <= 1; x++)
         {
@@ -1050,19 +1339,114 @@ public class SimulationScript : MonoBehaviour
                     {
                         if (Vector2.Distance(positions[i], positions[j]) < kernelSupportRadius)
                         {
-                            n.Add(j);
+                            // n.Add(j);
+                            neighborsParticles[neighbors[i] + counter] = j;
+                            counter++;
                         }
                     }
                 }
             }
         }
 
-        neighbors[i] = n;
+        // // Clear all neighbors
+        // for (int n = 0; n < numParticleNeighbors; n++)
+        // {
+        //     neighborsParticles[neighbors[i] + n] = -1;
+        // }
+        // // Initialize counter
+        // int counter = 0;
+        // int cellIndex = spatialGrid.computeCellIndex(positions[i]);
+        // int[] neighborcells = new int[9];
+        // neighborcells[0] = cellIndex;
+        // neighborcells[1] = cellIndex - 1;
+        // neighborcells[2] = cellIndex + 1;
+        // neighborcells[3] = cellIndex + spatialGrid.height;
+        // neighborcells[4] = cellIndex + spatialGrid.height - 1;
+        // neighborcells[5] = cellIndex + spatialGrid.height + 1;
+        // neighborcells[6] = cellIndex - spatialGrid.height;
+        // neighborcells[7] = cellIndex - spatialGrid.height - 1;
+        // neighborcells[8] = cellIndex - spatialGrid.height + 1;
+        // foreach (int cell in neighborcells)
+        // {
+        //     if (cell > 0 && cell < spatialGrid.cellCounter.Length)
+        //     {
+        //         int cellStart = spatialGrid.cellCounter[cell];
+        //         int cellEnd = spatialGrid.cellCounter[cell + 1];
+        //         for (int j = cellStart; j < cellEnd; j++)
+        //         {
+        //             if (Vector2.Distance(positions[i], positions[j]) < kernelSupportRadius)
+        //             {
+        //                 neighborsParticles[neighbors[i] + counter] = j;
+        //                 counter++;
+        //             }
+        //         }
+        //     }
+        // }
+    }
+
+    // Finds all neighbors for all particles in cell c
+    void findNeighborsIndexSort2(int c)
+    {
+        // Check if particles in cell otherwise skip
+        int cellStart = spatialGrid.cellCounter[c];
+        int cellEnd = spatialGrid.cellCounter[c + 1];
+        if (cellStart < cellEnd)
+        {
+            // Compute all neighboring cells
+            int[] neighborcells = new int[9];
+            neighborcells[0] = c;
+            neighborcells[1] = c - 1;
+            neighborcells[2] = c + 1;
+            neighborcells[3] = c + spatialGrid.height;
+            neighborcells[4] = c + spatialGrid.height - 1;
+            neighborcells[5] = c + spatialGrid.height + 1;
+            neighborcells[6] = c - spatialGrid.height;
+            neighborcells[7] = c - spatialGrid.height - 1;
+            neighborcells[8] = c - spatialGrid.height + 1;
+            // Iterate over all particles in cell c
+            for (int i = cellStart; i < cellEnd; i++)
+            {
+                // Only look for neighbors if i is a fluid particle
+                if (particleArray[i] < numParticles)
+                {
+                    // Clear all neighbors
+                    for (int n = 0; n < numParticleNeighbors; n++)
+                    {
+                        neighborsParticles[neighbors[i] + n] = -1;
+                    }
+                    // Initialize counter
+                    int counter = 0;
+                    // Test all potential neighbors in neighboring cells
+                    foreach (int cell in neighborcells)
+                    {
+                        if (cell >= 0 && cell < spatialGrid.cellCounter.Length)
+                        {
+                            int cellStart2 = spatialGrid.cellCounter[cell];
+                            int cellEnd2 = spatialGrid.cellCounter[cell + 1];
+                            for (int j = cellStart2; j < cellEnd2; j++)
+                            {
+                                if (Vector2.Distance(positions[i], positions[j]) < kernelSupportRadius)
+                                {
+                                    neighborsParticles[neighbors[i] + counter] = j;
+                                    counter++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     void findNeighborsZIndexSort(int i)
     {
-        List<int> n = new List<int>();
+        // Clear all neighbors
+        for (int n = 0; n < numParticleNeighbors; n++)
+        {
+            neighborsParticles[neighbors[i] + n] = -1;
+        }
+        // Initialize counter
+        int counter = 0;
         Vector2 gridCell = spatialGrid.computeCellPosition(positions[i]);
         for (int x = -1; x <= 1; x++)
         {
@@ -1080,20 +1464,27 @@ public class SimulationScript : MonoBehaviour
                     {
                         if (Vector2.Distance(positions[i], positions[j]) < kernelSupportRadius)
                         {
-                            n.Add(j);
+                            // n.Add(j);
+                            neighborsParticles[neighbors[i] + counter] = j;
+                            counter++;
                         }
                     }
                 }
             }
         }
 
-        neighbors[i] = n;
+        // neighbors[i] = n;
     }
 
     private void findNeighborsSpatialHashing(int i)
     {
-        List<int> n = new List<int>();
-        List<int> hashIndices = new List<int>();
+        // Clear all neighbors
+        for (int n = 0; n < numParticleNeighbors; n++)
+        {
+            neighborsParticles[neighbors[i] + n] = -1;
+        }
+        // Initialize counter
+        int counter = 0;
         Vector2 gridCell = spatialGrid.computeCellPosition(positions[i]);
         for (int x = -1; x <= 1; x++)
         {
@@ -1104,111 +1495,206 @@ public class SimulationScript : MonoBehaviour
                 if (spatialGrid.isValidCell(new Vector2(cellX, cellY)))
                 {
                     int cellIndex = spatialGrid.computeHashIndexForCell(cellX, cellY);
-                    // foreach (int p in spatialGrid.hashTable[cellIndex])
-                    // {
-                    //     if (Vector2.Distance(positions[i], positions[p]) < kernelSupportRadius)
-                    //     {
-                    //         n.Add(p);
-                    //     }
-                    // }
-                    if (!hashIndices.Contains(cellIndex))
+                    foreach (int p in spatialGrid.hashTable[cellIndex])
                     {
-                        hashIndices.Add(cellIndex);
-
-                        foreach (int p in spatialGrid.hashTable[cellIndex])
+                        if (p >= 0)
                         {
                             if (Vector2.Distance(positions[i], positions[p]) < kernelSupportRadius)
                             {
-                                n.Add(p);
+                                neighborsParticles[neighbors[i] + counter] = p;
+                                counter++;
                             }
                         }
                     }
                 }
             }
         }
-        neighbors[i] = n;
     }
 
-    // Return int List without boundary particles
-    List<int> removeBoundarysInt(List<int> particles)
+    private void findNeighborsSpatialHashing2(int cell)
     {
-        List<int> newList = new List<int>();
-        for (int i = 0; i < numParticles + numBoundaries; i++)
+        // Get all particles in cell
+        int[] particles = spatialGrid.hashTable[cell];
+
+        // Find neighbors for all particles
+        foreach (int i in particles)
         {
-            if (particleArray[i] < numParticles)
-            {
-                newList.Add(particles[i]);
-            }
+            // Check if valid particle
+            if (i >= 0)
+                // Only find neighbors for fluid particles
+                if (particleArray[i] < numParticles)
+                {
+                    // Clear all neighbors
+                    for (int n = 0; n < numParticleNeighbors; n++)
+                    {
+                        neighborsParticles[neighbors[i] + n] = -1;
+                    }
+                    // Initialize counter
+                    int counter = 0;
+                    Vector2 gridCell = spatialGrid.computeCellPosition(positions[i]);
+                    for (int x = -1; x <= 1; x++)
+                    {
+                        for (int y = -1; y <= 1; y++)
+                        {
+                            int cellX = (int)gridCell.x + x;
+                            int cellY = (int)gridCell.y + y;
+                            if (spatialGrid.isValidCell(new Vector2(cellX, cellY)))
+                            {
+                                int cellIndex = spatialGrid.computeHashIndexForCell(cellX, cellY);
+                                foreach (int p in spatialGrid.hashTable[cellIndex])
+                                {
+                                    if (p >= 0)
+                                    {
+                                        if (Vector2.Distance(positions[i], positions[p]) < kernelSupportRadius)
+                                        {
+                                            neighborsParticles[neighbors[i] + counter] = p;
+                                            counter++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
         }
-        return newList;
     }
 
-    // Return Vector2 List without boundary particles
-    List<Vector2> removeBoundarysVector2(List<Vector2> particles)
+    private void findNeighborsCompactHashing(int cell)
     {
-        List<Vector2> newList = new List<Vector2>();
-        for (int i = 0; i < numParticles + numBoundaries; i++)
+        // Get all particles in cell
+        int[] particles = spatialGrid.compactArray[cell];
+
+        // Find neighbors for all particles
+        foreach (int i in particles)
         {
-            if (particleArray[i] < numParticles)
-            {
-                newList.Add(particles[i]);
-            }
+            // Check if valid particle
+            if (i >= 0)
+                // Only find neighbors for fluid particles
+                if (particleArray[i] < numParticles)
+                {
+                    // Clear all neighbors
+                    for (int n = 0; n < numParticleNeighbors; n++)
+                    {
+                        neighborsParticles[neighbors[i] + n] = -1;
+                    }
+                    // Initialize counter
+                    int counter = 0;
+                    Vector2 gridCell = spatialGrid.computeCellPosition(positions[i]);
+                    for (int x = -1; x <= 1; x++)
+                    {
+                        for (int y = -1; y <= 1; y++)
+                        {
+                            int cellX = (int)gridCell.x + x;
+                            int cellY = (int)gridCell.y + y;
+                            if (spatialGrid.isValidCell(new Vector2(cellX, cellY)))
+                            {
+                                int cellIndex = spatialGrid.computeHashIndexForCell(cellX, cellY); // 3096
+                                // Get position in compact array
+                                int posInArray = spatialGrid.compactHashTable[cellIndex]; // 80
+                                // Check if cell inside array
+                                if (posInArray >= 0 && posInArray < spatialGrid.compactArray.Length)
+                                {
+                                    foreach (int p in spatialGrid.compactArray[posInArray])
+                                    {
+                                        if (p >= 0)
+                                        {
+                                            if (Vector2.Distance(positions[i], positions[p]) < kernelSupportRadius)
+                                            {
+                                                neighborsParticles[neighbors[i] + counter] = p;
+                                                counter++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
         }
-        return newList;
     }
 
-    // Return Vector2 floats without boundary particles
-    List<float> removeBoundarysFloat(List<float> particles)
-    {
-        List<float> newList = new List<float>();
-        for (int i = 0; i < numParticles + numBoundaries; i++)
-        {
-            if (particleArray[i] < numParticles)
-            {
-                newList.Add(particles[i]);
-            }
-        }
-        return newList;
-    }
+    // // Return int List without boundary particles
+    // List<int> removeBoundarysInt(List<int> particles)
+    // {
+    //     List<int> newList = new List<int>();
+    //     for (int i = 0; i < numParticles + numBoundaries; i++)
+    //     {
+    //         if (particleArray[i] < numParticles)
+    //         {
+    //             newList.Add(particles[i]);
+    //         }
+    //     }
+    //     return newList;
+    // }
 
-    // Return Vector2 colors without boundary particles
-    List<Color> removeBoundarysColors(List<Color> particles)
-    {
-        List<Color> newList = new List<Color>();
-        for (int i = 0; i < numParticles + numBoundaries; i++)
-        {
-            if (particleArray[i] < numParticles)
-            {
-                newList.Add(particles[i]);
-            }
-        }
-        return newList;
-    }
-    // Update is called once per frame
+    // // Return Vector2 List without boundary particles
+    // List<Vector2> removeBoundarysVector2(List<Vector2> particles)
+    // {
+    //     List<Vector2> newList = new List<Vector2>();
+    //     for (int i = 0; i < numParticles + numBoundaries; i++)
+    //     {
+    //         if (particleArray[i] < numParticles)
+    //         {
+    //             newList.Add(particles[i]);
+    //         }
+    //     }
+    //     return newList;
+    // }
+
+    // // Return Vector2 floats without boundary particles
+    // List<float> removeBoundarysFloat(List<float> particles)
+    // {
+    //     List<float> newList = new List<float>();
+    //     for (int i = 0; i < numParticles + numBoundaries; i++)
+    //     {
+    //         if (particleArray[i] < numParticles)
+    //         {
+    //             newList.Add(particles[i]);
+    //         }
+    //     }
+    //     return newList;
+    // }
+
+    // // Return Vector2 colors without boundary particles
+    // List<Color> removeBoundarysColors(List<Color> particles)
+    // {
+    //     List<Color> newList = new List<Color>();
+    //     for (int i = 0; i < numParticles + numBoundaries; i++)
+    //     {
+    //         if (particleArray[i] < numParticles)
+    //         {
+    //             newList.Add(particles[i]);
+    //         }
+    //     }
+    //     return newList;
+    // }
+    // // Update is called once per frame
     void Update()
     {
+        Stopwatch watch3 = new Stopwatch();
+        watch3.Start();
         if (previousBorderOffset != borderOffset && tests == 0)
         {
-            // particleArray.RemoveRange(numParticles, numBoundaries);
-            positions = removeBoundarysVector2(positions);
-            // positions.RemoveRange(numParticles, numBoundaries);
-            colors = removeBoundarysColors(colors);
-            // colors.RemoveRange(numParticles, numBoundaries);
-            velocitys = removeBoundarysVector2(velocitys);
-            // velocitys.RemoveRange(numParticles, numBoundaries);
-            densitys = removeBoundarysFloat(densitys);
-            // densitys.RemoveRange(numParticles, numBoundaries);
-            pressures = removeBoundarysFloat(pressures);
-            // pressures.RemoveRange(numParticles, numBoundaries);
-            forces = removeBoundarysVector2(forces);
-            // forces.RemoveRange(numParticles, numBoundaries);
-            nPForces = removeBoundarysVector2(nPForces);
-            // nPForces.RemoveRange(numParticles, numBoundaries);
-            // Initialize boundary particles
-            particleArray = removeBoundarysInt(particleArray);
-            numBoundaries = 0;
-            initializeBorder(doubleBorder);
-            initializeBorderWall(borderOffset, doubleBorder);
+            // // particleArray.RemoveRange(numParticles, numBoundaries);
+            // positions = removeBoundarysVector2(positions);
+            // // positions.RemoveRange(numParticles, numBoundaries);
+            // colors = removeBoundarysColors(colors);
+            // // colors.RemoveRange(numParticles, numBoundaries);
+            // velocitys = removeBoundarysVector2(velocitys);
+            // // velocitys.RemoveRange(numParticles, numBoundaries);
+            // densitys = removeBoundarysFloat(densitys);
+            // // densitys.RemoveRange(numParticles, numBoundaries);
+            // pressures = removeBoundarysFloat(pressures);
+            // // pressures.RemoveRange(numParticles, numBoundaries);
+            // forces = removeBoundarysVector2(forces);
+            // // forces.RemoveRange(numParticles, numBoundaries);
+            // nPForces = removeBoundarysVector2(nPForces);
+            // // nPForces.RemoveRange(numParticles, numBoundaries);
+            // // Initialize boundary particles
+            // particleArray = removeBoundarysInt(particleArray);
+            // numBoundaries = 0;
+            // initializeBorder(doubleBorder);
+            // initializeBorderWall(borderOffset, doubleBorder);
 
             // Inform the shader about the total amount of drawn particles
             drawCirclesScript.total = numParticles + numBoundaries;
@@ -1244,7 +1730,7 @@ public class SimulationScript : MonoBehaviour
             // Initialize boundary particles
             if (tests == 0)
             {
-                initializeBorder(doubleBorder);
+                initializeBorder0(doubleBorder);
                 initializeBorderWall(borderOffset, doubleBorder);
                 mainCamera.orthographicSize = 5;
                 mainCamera.transform.position = new Vector3(8.91f, 5, -10);
@@ -1258,15 +1744,30 @@ public class SimulationScript : MonoBehaviour
 
             else if (tests == 2)
             {
-                initializeBorder3(doubleBorder);
+                initializeBorder(166, 166, 166, 166, true);
                 mainCamera.orthographicSize = 10;
                 mainCamera.transform.position = new Vector3(12, 10, -10);
             }
+
             else if (tests == 3)
             {
-                initializeBorder4(doubleBorder);
-                mainCamera.orthographicSize = 20;
-                mainCamera.transform.position = new Vector3(22, 20, -10);
+                initializeBorder(332, 332, 623, 623, true);
+                mainCamera.orthographicSize = 23;
+                mainCamera.transform.position = new Vector3(41f, 23, -10);
+            }
+
+            else if (tests == 4)
+            {
+                initializeBorder(800, 800, 800, 800, true);
+                mainCamera.orthographicSize = 40;
+                mainCamera.transform.position = new Vector3(50, 40, -10);
+            }
+
+            else if (tests == 5)
+            {
+                initializeBorder(1700, 1700, 1700, 1700, true);
+                mainCamera.orthographicSize = 100;
+                mainCamera.transform.position = new Vector3(100, 100, -10);
             }
 
             averageDensity = new List<float>();
@@ -1278,15 +1779,12 @@ public class SimulationScript : MonoBehaviour
             // Inform the shader about the total amount of drawn particles
             drawCirclesScript.total = numParticles + numBoundaries;
 
-            neighbors = new List<int>[numParticles + numBoundaries];
-            numNeighbors = new int[numParticles + numBoundaries];
-
             // IMPORTANT!!!!
             sortedParticles = new int[numParticles + numBoundaries];
             sortedPositions = new Vector2[numParticles + numBoundaries];
             sortedVelocitys = new Vector2[numParticles + numBoundaries];
             sortedColors = new Color[numParticles + numBoundaries];
-            sortedNeighbors = new List<int>[numParticles + numBoundaries];
+            sortedNeighbors = new int[numParticles + numBoundaries];
             sortedDensitys = new float[numParticles + numBoundaries];
             sortedPressures = new float[numParticles + numBoundaries];
             sortedForces = new Vector2[numParticles + numBoundaries];
@@ -1326,8 +1824,9 @@ public class SimulationScript : MonoBehaviour
 
         // Check for max velocity
         maxVelocity = new Vector2(0, 0);
-        for (int i = 0; i < numParticles + numBoundaries; i++)
+        for (int j = 0; j < numParticles + numBoundaries; j++)
         {
+            int i = particleHandles[j].particleIndex;
             if (particleArray[i] < numParticles)
             {
                 if (velocitys[i].magnitude > maxVelocity.magnitude && velocitys[i].y > -15 && velocitys[i].magnitude > 0)
@@ -1358,8 +1857,9 @@ public class SimulationScript : MonoBehaviour
         {
             // Add average density
             float avgDensity = 0.0f;
-            for (int i = 0; i < numParticles + numBoundaries; i++)
+            for (int j = 0; j < numParticles + numBoundaries; j++)
             {
+                int i = particleHandles[j].particleIndex;
                 if (particleArray[i] < numParticles)
                 {
                     avgDensity += densitys[i];
@@ -1392,160 +1892,221 @@ public class SimulationScript : MonoBehaviour
             queryTimes.Clear();
         }
 
-        // Calculate time step
-        SimulationStep(timeStep);
-        DrawParticles();
-
         if (moveParticles)
         {
             tS++;
+            measurements.timeStep = tS;
             if (tS == maxTS)
             {
                 moveParticles = !moveParticles;
             }
         }
 
+        // Calculate time step
+        Stopwatch watch = new Stopwatch();
+        watch.Start();
+        SimulationStep(timeStep);
+        watch.Stop();
+        if (moveParticles)
+        {
+            measurements.simulationStep = watch.Elapsed.TotalMilliseconds;
+            sumSimulationStep += measurements.simulationStep;
+            measurements.averageSimulationStep = sumSimulationStep / watchCounter;
+        }
+        Stopwatch watch2 = new Stopwatch();
+        watch2.Start();
+        DrawParticles();
+        watch2.Stop();
+        if (moveParticles)
+        {
+            measurements.drawingTime = watch2.Elapsed.TotalMilliseconds;
+            sumDrawingTime += measurements.drawingTime;
+            measurements.averageDrawingTime = sumDrawingTime / watchCounter;
+        }
+
+
+        watch3.Stop();
+        if (moveParticles)
+        {
+            measurements.updateTime = watch3.Elapsed.TotalMilliseconds;
+            sumUpdateTime += measurements.updateTime;
+            measurements.averageUpdateTime = sumUpdateTime / watchCounter;
+
+            watchCounter++;
+        }
+
     }
     void SimulationStep(float deltaTime)
     {
-        if (moveParticles)
+        if (spatialGrid.chooseNeighborSearch == -1)
         {
-            counter++;
+            Stopwatch v1 = new Stopwatch();
+            v1.Start();
+            quadraticSearch();
+            v1.Stop();
+            if (moveParticles)
+            {
+                measurements.constructionTime = v1.Elapsed.TotalMilliseconds;
+                sumConstructionTime += measurements.constructionTime;
+                measurements.averageConstructionTime = sumConstructionTime / tS;
+            }
         }
-
-        if (spatialGrid.chooseNeighborSearch == 0)
+        else if (spatialGrid.chooseNeighborSearch == 0)
         {
             // Measure construction time
-            var v1 = new Stopwatch();
+            Stopwatch v1 = new Stopwatch();
             v1.Start();
             constructionBasic();
             v1.Stop();
             if (moveParticles)
             {
-                constructionTime = v1.Elapsed.TotalMilliseconds;
-                sumConstructionTime += constructionTime;
-                averageConstructionTime = sumConstructionTime / counter;
+                measurements.constructionTime = v1.Elapsed.TotalMilliseconds;
+                sumConstructionTime += measurements.constructionTime;
+                measurements.averageConstructionTime = sumConstructionTime / tS;
             }
 
             // Measure query time
-            var v2 = new Stopwatch();
+            Stopwatch v2 = new Stopwatch();
             v2.Start();
             queryGrid();
             v2.Stop();
             if (moveParticles)
             {
-                queryTime = v2.Elapsed.TotalMilliseconds;
-                queryTimes.Add(queryTime);
-                sumQueryTime += queryTime;
-                averageQueryTime = sumQueryTime / counter;
+                measurements.queryTime = v2.Elapsed.TotalMilliseconds;
+                queryTimes.Add(measurements.queryTime);
+                sumQueryTime += measurements.queryTime;
+                measurements.averageQueryTime = sumQueryTime / tS;
 
-                averageTotalTime = averageConstructionTime + averageQueryTime;
+                measurements.averageTotalTime = measurements.averageConstructionTime + measurements.averageQueryTime;
             }
 
         }
         else if (spatialGrid.chooseNeighborSearch == 1)
         {
             // Measure construction time
-            var v1 = new Stopwatch();
+            Stopwatch v1 = new Stopwatch();
             v1.Start();
             constructionIndexSort();
+            // constructionCompactHashing();
             v1.Stop();
             if (moveParticles)
             {
-                constructionTime = v1.Elapsed.TotalMilliseconds;
-                sumConstructionTime += constructionTime;
-                averageConstructionTime = sumConstructionTime / counter;
+                measurements.constructionTime = v1.Elapsed.TotalMilliseconds;
+                sumConstructionTime += measurements.constructionTime;
+                measurements.averageConstructionTime = sumConstructionTime / tS;
             }
 
             // Measure query time
-            var v2 = new Stopwatch();
+            Stopwatch v2 = new Stopwatch();
             v2.Start();
             queryIndexSort();
             v2.Stop();
             if (moveParticles)
             {
-                queryTime = v2.Elapsed.TotalMilliseconds;
-                queryTimes.Add(queryTime);
-                sumQueryTime += queryTime;
-                averageQueryTime = sumQueryTime / counter;
+                measurements.queryTime = v2.Elapsed.TotalMilliseconds;
+                queryTimes.Add(measurements.queryTime);
+                sumQueryTime += measurements.queryTime;
+                measurements.averageQueryTime = sumQueryTime / tS;
 
-                averageTotalTime = averageConstructionTime + averageQueryTime;
+                measurements.averageTotalTime = measurements.averageConstructionTime + measurements.averageQueryTime;
             }
         }
         else if (spatialGrid.chooseNeighborSearch == 2)
         {
             // Measure construction time
-            var v1 = new Stopwatch();
+            Stopwatch v1 = new Stopwatch();
             v1.Start();
             constructionZIndexSort();
             v1.Stop();
             if (moveParticles)
             {
-                constructionTime = v1.Elapsed.TotalMilliseconds;
-                sumConstructionTime += constructionTime;
-                averageConstructionTime = sumConstructionTime / counter;
+                measurements.constructionTime = v1.Elapsed.TotalMilliseconds;
+                sumConstructionTime += measurements.constructionTime;
+                measurements.averageConstructionTime = sumConstructionTime / tS;
             }
 
             // Measure query time
-            var v2 = new Stopwatch();
+            Stopwatch v2 = new Stopwatch();
             v2.Start();
             queryZIndexSort();
             v2.Stop();
             if (moveParticles)
             {
-                queryTime = v2.Elapsed.TotalMilliseconds;
-                queryTimes.Add(queryTime);
-                sumQueryTime += queryTime;
-                averageQueryTime = sumQueryTime / counter;
+                measurements.queryTime = v2.Elapsed.TotalMilliseconds;
+                queryTimes.Add(measurements.queryTime);
+                sumQueryTime += measurements.queryTime;
+                measurements.averageQueryTime = sumQueryTime / tS;
 
-                averageTotalTime = averageConstructionTime + averageQueryTime;
+                measurements.averageTotalTime = measurements.averageConstructionTime + measurements.averageQueryTime;
             }
         }
 
         else if (spatialGrid.chooseNeighborSearch == 3)
         {
             // Measure construction time
-            var v1 = new Stopwatch();
+            Stopwatch v1 = new Stopwatch();
             v1.Start();
             constructionSpatialHashing();
             v1.Stop();
             if (moveParticles)
             {
-                constructionTime = v1.Elapsed.TotalMilliseconds;
-                sumConstructionTime += constructionTime;
-                averageConstructionTime = sumConstructionTime / counter;
+                measurements.constructionTime = v1.Elapsed.TotalMilliseconds;
+                sumConstructionTime += measurements.constructionTime;
+                measurements.averageConstructionTime = sumConstructionTime / tS;
             }
 
             // Measure query time
-            var v2 = new Stopwatch();
+            Stopwatch v2 = new Stopwatch();
             v2.Start();
-            queryHashTable();
+            queryHashTable2();
             v2.Stop();
             if (moveParticles)
             {
-                queryTime = v2.Elapsed.TotalMilliseconds;
-                queryTimes.Add(queryTime);
-                sumQueryTime += queryTime;
-                averageQueryTime = sumQueryTime / counter;
+                measurements.queryTime = v2.Elapsed.TotalMilliseconds;
+                queryTimes.Add(measurements.queryTime);
+                sumQueryTime += measurements.queryTime;
+                measurements.averageQueryTime = sumQueryTime / tS;
 
-                averageTotalTime = averageConstructionTime + averageQueryTime;
+                measurements.averageTotalTime = measurements.averageConstructionTime + measurements.averageQueryTime;
             }
         }
 
-        // Compute num neighbors
-        for (int x = 0; x < numParticles + numBoundaries; x++)
+        else if (spatialGrid.chooseNeighborSearch == 4)
         {
-            if (particleArray[x] < numParticles)
+            // Measure construction time
+            Stopwatch v1 = new Stopwatch();
+            v1.Start();
+            constructionCompactHashing();
+            v1.Stop();
+            if (moveParticles)
             {
-                numNeighbors[x] = neighbors[x].Count;
+                measurements.constructionTime = v1.Elapsed.TotalMilliseconds;
+                sumConstructionTime += measurements.constructionTime;
+                measurements.averageConstructionTime = sumConstructionTime / tS;
+            }
+
+            // Measure query time
+            Stopwatch v2 = new Stopwatch();
+            v2.Start();
+            queryCompactHashTable();
+            v2.Stop();
+            if (moveParticles)
+            {
+                measurements.queryTime = v2.Elapsed.TotalMilliseconds;
+                queryTimes.Add(measurements.queryTime);
+                sumQueryTime += measurements.queryTime;
+                measurements.averageQueryTime = sumQueryTime / tS;
+
+                measurements.averageTotalTime = measurements.averageConstructionTime + measurements.averageQueryTime;
             }
         }
 
         // Change color according to velocity
         if (colorParticles)
         {
-            for (int i = 0; i < numParticles + numBoundaries; i++)
+            for (int j = 0; j < numParticles + numBoundaries; j++)
             {
+                int i = particleHandles[j].particleIndex;
                 if (particleArray[i] < numParticles)
                 {
                     float speed = velocitys[i].magnitude / speedColor;
@@ -1554,55 +2115,107 @@ public class SimulationScript : MonoBehaviour
             }
         }
 
-        // Compute non-pressure accelerations
-        for (int i = 0; i < numParticles + numBoundaries; i++)
+
+        // Compute densitys
+        Stopwatch watchDensity = new Stopwatch();
+        watchDensity.Start();
+        Parallel.For(0, numParticles + numBoundaries, j =>
         {
+            int i = particleHandles[j].particleIndex;
+            if (particleArray[i] < numParticles)
+            {
+                computeDensity(i);
+            }
+        });
+
+        watchDensity.Stop();
+        if (moveParticles)
+        {
+            densityTime = watchDensity.Elapsed.TotalMilliseconds;
+            sumDensityTime += densityTime;
+            measurements.averageDensityTime = sumDensityTime / tS;
+        }
+
+        Stopwatch watchPressure = new Stopwatch();
+        watchPressure.Start();
+        // Compute pressures
+        Parallel.For(0, numParticles + numBoundaries, j =>
+        {
+            int i = particleHandles[j].particleIndex;
+            if (particleArray[i] < numParticles)
+            {
+                pressures[i] = Mathf.Max(stiffness * ((densitys[i] / startDensity) - 1), 0);
+            }
+        });
+        watchPressure.Stop();
+        if (moveParticles)
+        {
+            pressureTime = watchPressure.Elapsed.TotalMilliseconds;
+            sumPressureTime += pressureTime;
+            measurements.averagePressureTime = sumPressureTime / tS;
+        }
+
+        // Compute non-pressure accelerations
+        Stopwatch watchNPForces = new Stopwatch();
+        watchNPForces.Start();
+        Parallel.For(0, numParticles + numBoundaries, j =>
+        {
+            int i = particleHandles[j].particleIndex;
             if (particleArray[i] < numParticles)
             {
                 Vector2 v = computeViscosityAcceleration(i);
                 Vector2 g = new Vector2(0, gravity);
                 nPForces[i] = v + g;
             }
-        }
-
-        // Compute densitys
-        for (int i = 0; i < numParticles + numBoundaries; i++)
+        });
+        watchNPForces.Stop();
+        if (moveParticles)
         {
-            if (particleArray[i] < numParticles)
-            {
-                computeDensity(i);
-            }
-        }
-        // Compute pressures
-        for (int i = 0; i < numParticles + numBoundaries; i++)
-        {
-            if (particleArray[i] < numParticles)
-            {
-                pressures[i] = Mathf.Max(stiffness * ((densitys[i] / startDensity) - 1), 0);
-            }
+            NPForcesTime = watchNPForces.Elapsed.TotalMilliseconds;
+            sumNPForcesTime += NPForcesTime;
+            measurements.averageNPForcesTime = sumNPForcesTime / tS;
         }
 
         // Compute pressure forces
-        for (int i = 0; i < numParticles + numBoundaries; i++)
+        Stopwatch watchPressureForces = new Stopwatch();
+        watchPressureForces.Start();
+        Parallel.For(0, numParticles + numBoundaries, j =>
         {
+            int i = particleHandles[j].particleIndex;
             if (particleArray[i] < numParticles)
             {
                 computePressureAcceleration(i);
             }
+        });
+        watchPressureForces.Stop();
+        if (moveParticles)
+        {
+            pressureForcesTime = watchPressureForces.Elapsed.TotalMilliseconds;
+            sumPressureForcesTime += pressureForcesTime;
+            measurements.averagePressureForcesTime = sumPressureForcesTime / tS;
         }
 
         // Update particle
-        for (int i = 0; i < numParticles + numBoundaries; i++)
+        Stopwatch watchmoveParticles = new Stopwatch();
+        watchmoveParticles.Start();
+        Parallel.For(0, numParticles + numBoundaries, j =>
         {
+            int i = particleHandles[j].particleIndex;
             if (particleArray[i] < numParticles)
             {
-                Vector2 acceleration = new Vector2(0, 0);
-                acceleration = nPForces[i] + forces[i];
+                Vector2 acceleration = nPForces[i] + forces[i];
                 if (moveParticles)
                 {
                     MoveParticles(acceleration, i, deltaTime);
                 }
             }
+        });
+        watchmoveParticles.Stop();
+        if (moveParticles)
+        {
+            moveParticlesTime = watchmoveParticles.Elapsed.TotalMilliseconds;
+            sumMoveParticlesTime += moveParticlesTime;
+            measurements.averageMoveParticlesTime = sumMoveParticlesTime / tS;
         }
     }
 
@@ -1616,12 +2229,8 @@ public class SimulationScript : MonoBehaviour
     // Draw all Particles at Position with their respective color
     private void DrawParticles()
     {
-        Vector2[] particlePositions = positions.ToArray();
-
-        Color[] particleColors = colors.ToArray();
-
-        drawCirclesScript.DrawCirclesAtPositions(convertPositions(particlePositions), particleColors, particleSize * (texResolution / quadWidth));
-        drawCirclesScript.DispatchKernel(Mathf.Max(particlePositions.Length / 16, 1));
+        drawCirclesScript.DrawCirclesAtPositions(convertPositions(positions), colors, particleSize * (texResolution / quadWidth));
+        drawCirclesScript.DispatchKernel(Mathf.Max(positions.Length / 256, 1)); //64 for 4 mill
     }
 
     // Convert positions to texCoords
@@ -1638,15 +2247,16 @@ public class SimulationScript : MonoBehaviour
     // Initialize particle
     private void InitParticle(Vector2 position, Color color)
     {
-        particleArray.Add(numParticles);
-
-        positions.Add(position);
-        velocitys.Add(new Vector2(0, 0));
-        colors.Add(color);
-        densitys.Add(0.0f);
-        pressures.Add(0.0f);
-        forces.Add(new Vector2(0, 0));
-        nPForces.Add(new Vector2(0, 0));
+        particleHandles[numParticles] = (numParticles, 0);
+        particleArray[numParticles] = numParticles;
+        positions[numParticles] = position;
+        velocitys[numParticles] = new Vector2(0, 0);
+        colors[numParticles] = color;
+        neighbors[numParticles] = numParticles * numParticleNeighbors;
+        densitys[numParticles] = 0.0f;
+        pressures[numParticles] = 0.0f;
+        forces[numParticles] = new Vector2(0, 0);
+        nPForces[numParticles] = new Vector2(0, 0);
 
         numParticles++;
     }
@@ -1654,15 +2264,15 @@ public class SimulationScript : MonoBehaviour
     // Initialize boundary particle
     private void InitBoundaryParticle(Vector2 position)
     {
-        particleArray.Add(numParticles + numBoundaries);
-
-        positions.Add(position);
-        colors.Add(Color.black);
-        velocitys.Add(new Vector2(0, 0));
-        densitys.Add(0.0f);
-        pressures.Add(0.0f);
-        forces.Add(new Vector2(0, 0));
-        nPForces.Add(new Vector2(0, 0));
+        particleHandles[numParticles + numBoundaries] = (numParticles + numBoundaries, 0);
+        particleArray[numParticles + numBoundaries] = numParticles + numBoundaries;
+        positions[numParticles + numBoundaries] = position;
+        colors[numParticles + numBoundaries] = Color.black;
+        velocitys[numParticles + numBoundaries] = new Vector2(0, 0);
+        densitys[numParticles + numBoundaries] = 0.0f;
+        pressures[numParticles + numBoundaries] = 0.0f;
+        forces[numParticles + numBoundaries] = new Vector2(0, 0);
+        nPForces[numParticles + numBoundaries] = new Vector2(0, 0);
 
         numBoundaries++;
     }
@@ -1691,8 +2301,9 @@ public class SimulationScript : MonoBehaviour
         screenPosition.z = Camera.main.nearClipPlane + 1;
         mouse = Camera.main.ScreenToWorldPoint(screenPosition);
 
-        for (int i = 0; i < numParticles + numBoundaries; i++)
+        for (int j = 0; j < numParticles + numBoundaries; j++)
         {
+            int i = particleHandles[j].particleIndex;
             if (particleArray[i] < numParticles)
             {
                 if (Vector2.Distance(positions[i], mouse) <= particleSize)
@@ -1708,15 +2319,19 @@ public class SimulationScript : MonoBehaviour
     private Vector2 computeViscosityAcceleration(int i)
     {
         Vector2 viscosity = new Vector2(0, 0);
-        foreach (int num in neighbors[i])
+        for (int n = 0; n < numParticleNeighbors; n++)
         {
-            if (particleArray[num] < numParticles)
+            int num = neighborsParticles[neighbors[i] + n];
+            if (num >= 0)
             {
-                Vector2 xij = positions[i] - positions[num];
-                Vector2 vij = velocitys[i] - velocitys[num];
-                Vector2 formula = vij * xij / ((xij * xij) + new Vector2(0.01f * particleSpacing * particleSpacing, 0.01f * particleSpacing * particleSpacing));
-                Vector2 gradient = smoothingKernelDerivative(positions[i], positions[num], particleSpacing);
-                viscosity += particleMass / densitys[num] * formula * gradient;
+                if (particleArray[num] < numParticles)
+                {
+                    Vector2 xij = positions[i] - positions[num];
+                    Vector2 vij = velocitys[i] - velocitys[num];
+                    Vector2 formula = vij * xij / ((xij * xij) + new Vector2(0.01f * particleSpacing * particleSpacing, 0.01f * particleSpacing * particleSpacing));
+                    Vector2 gradient = smoothingKernelDerivative(positions[i], positions[num], particleSpacing);
+                    viscosity += particleMass / densitys[num] * formula * gradient;
+                }
             }
         }
         return 2 * v * viscosity;
@@ -1726,15 +2341,14 @@ public class SimulationScript : MonoBehaviour
     private void computeDensity(int i)
     {
         float result = 0.0f;
-        foreach (int num in neighbors[i])
+        for (int n = 0; n < numParticleNeighbors; n++)
         {
-            result += particleMass * smoothingKernel(positions[i], positions[num], particleSpacing);
+            int num = neighborsParticles[neighbors[i] + n];
+            if (num >= 0)
+            {
+                result += particleMass * smoothingKernel(positions[i], positions[num], particleSpacing);
+            }
         }
-
-        // foreach (int num in boundaryNeighbors[particle])
-        // {
-        //     result += particleMass * smoothingKernel(positions[particle], positions[num], particleSpacing);
-        // }
         densitys[i] = result;
     }
 
@@ -1742,19 +2356,23 @@ public class SimulationScript : MonoBehaviour
     private void computePressureAcceleration(int i)
     {
         Vector2 result = new Vector2(0, 0);
-        foreach (int num in neighbors[i])
+        for (int n = 0; n < numParticleNeighbors; n++)
         {
-            if (particleArray[num] < numParticles)
+            int num = neighborsParticles[neighbors[i] + n];
+            if (num >= 0)
             {
-                Vector2 gradient = smoothingKernelDerivative(positions[i], positions[num], particleSpacing);
-                float formula = (pressures[i] / (densitys[i] * densitys[i])) + (pressures[num] / (densitys[num] * densitys[num]));
-                result += particleMass * formula * gradient;
-            }
-            else
-            {
-                Vector2 gradient = smoothingKernelDerivative(positions[i], positions[num], particleSpacing);
-                float formula = (pressures[i] / (densitys[i] * densitys[i])) + (pressures[i] / (densitys[i] * densitys[i]));
-                result += particleMass * formula * gradient;
+                if (particleArray[num] < numParticles)
+                {
+                    Vector2 gradient = smoothingKernelDerivative(positions[i], positions[num], particleSpacing);
+                    float formula = (pressures[i] / (densitys[i] * densitys[i])) + (pressures[num] / (densitys[num] * densitys[num]));
+                    result += particleMass * formula * gradient;
+                }
+                else
+                {
+                    Vector2 gradient = smoothingKernelDerivative(positions[i], positions[num], particleSpacing);
+                    float formula = (pressures[i] / (densitys[i] * densitys[i])) + (pressures[i] / (densitys[i] * densitys[i]));
+                    result += particleMass * formula * gradient;
+                }
             }
         }
         forces[i] = -result;
@@ -1796,30 +2414,40 @@ public class SimulationScript : MonoBehaviour
     // Testing 1: Neighbor search
 
     // Color all neighbors in one color
-    public void colorNeighbors(int i, Color color)
+    public void colorNeighbors(int j, Color color)
     {
+        int i = particleHandles[j].particleIndex;
         if (particleArray[i] < numParticles)
         {
-            foreach (int num in neighbors[i])
+            for (int n = 0; n < numParticleNeighbors; n++)
             {
-                if (particleArray[num] < numParticles)
+                int num = neighborsParticles[neighbors[i] + n];
+                if (num >= 0)
                 {
-                    colors[num] = color;
+                    if (particleArray[num] < numParticles)
+                    {
+                        colors[num] = color;
+                    }
                 }
             }
         }
     }
 
-    public void colorBoundaryNeighbors(int i, Color color)
+    public void colorBoundaryNeighbors(int j, Color color)
     {
+        int i = particleHandles[j].particleIndex;
         if (particleArray[i] < numParticles)
         {
-            foreach (int num in neighbors[i])
+            for (int n = 0; n < numParticleNeighbors; n++)
             {
-                if (particleArray[num] >= numParticles)
+                int num = neighborsParticles[neighbors[i] + n];
+                if (num >= 0)
                 {
+                    if (particleArray[num] >= numParticles)
+                    {
 
-                    colors[num] = color;
+                        colors[num] = color;
+                    }
                 }
             }
         }
@@ -1830,8 +2458,9 @@ public class SimulationScript : MonoBehaviour
     // Push particles away from the cursor
     void mouseForceOut(Vector2 mousePos, float radius, float strength)
     {
-        for (int i = 0; i < numParticles + numBoundaries; i++)
+        for (int j = 0; j < numParticles + numBoundaries; j++)
         {
+            int i = particleHandles[j].particleIndex;
             if (particleArray[i] < numParticles)
             {
                 if (Vector2.Distance(mousePos, positions[i]) < radius)
@@ -1847,8 +2476,9 @@ public class SimulationScript : MonoBehaviour
     // Pull particles to the cursor
     void mouseForceIn(Vector2 mousePos, float radius, float strength)
     {
-        for (int i = 0; i < numParticles + numBoundaries; i++)
+        for (int j = 0; j < numParticles + numBoundaries; j++)
         {
+            int i = particleHandles[j].particleIndex;
             if (particleArray[i] < numBoundaries)
             {
                 if (Vector2.Distance(mousePos, positions[i]) < radius)
