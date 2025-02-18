@@ -8,6 +8,13 @@ TagManager:
   - Simulation
   - Grid
   - Measurements
+  - Helper
+  - BasicGrid
+  - IndexSort
+  - ZIndexSort
+  - SpatialHashing
+  - CompactHashing
+  - CellLinkedList
   layers:
   - Default
   - TransparentFX

@@ -1,0 +1,2648 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>HPCsharp</name>
+    </assembly>
+    <members>
+        <member name="M:HPCsharp.Algorithms.Statistics.StandardDeviation(System.Int32[])">
+            <summary>
+            Standard deviation of an array of integers.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Statistics.StandardDeviation(System.Int64[])">
+            <summary>
+            Standard deviation of an array of integers.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Statistics.MeanAbsoluteDeviation(System.Int32[])">
+            <summary>
+            Mean absolute deviation of an array of integers.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>result as a double</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Numerics.BigInteger[])">
+            <summary>
+            Summation of BigInteger array into a BigInteger sum.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Numerics.BigInteger[],System.Int32,System.Int32)">
+            <summary>
+            Summation of BigInteger array into a BigInteger sum.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToBigIntegerFast(System.Int64[])">
+            <summary>
+            Faster, perfectly accurate summation of long[] array, which uses a BigInteger accumulator for perfect accuracy,
+            and long integer summations for higher performance, handling overflow exceptions internally.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToBigIntegerFast(System.Nullable{System.Int64}[])">
+            <summary>
+            Faster, perfectly accurate summation of long[] nullable array, which uses a BigInteger accumulator for perfect accuracy,
+            and long integer summations for higher performance, handling overflow exceptions internally.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToBigIntegerFast(System.UInt64[])">
+            <summary>
+            Faster, perfectly accurate summation of ulong[] array, which uses a BigInteger accumulator for perfect accuracy,
+            and long integer summations for higher performance, handling overflow exceptions internally.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimalEvenFaster(System.UInt64[])">
+            <summary>
+            Even faster, perfectly accurate summation of ulong[] array, which uses a BigInteger accumulator for perfect accuracy,
+            and integer summations for higher performance, detecting overflow condition without exceptions.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimalFaster(System.UInt64[])">
+            <summary>
+            Faster, perfectly accurate summation of ulong[] array, which uses a Decimal accumulator for perfect accuracy,
+            and integer summations for higher performance, detecting overflow condition without exceptions.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimalFaster(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Faster, perfectly accurate summation of ulong[] array, which uses a Decimal accumulator for perfect accuracy,
+            and integer summations for higher performance, detecting overflow condition without exceptions.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToBigIntegerFaster(System.UInt64[])">
+            <summary>
+            Faster, perfectly accurate summation of ulong[] array, which uses a BigInteger accumulator for perfect accuracy,
+            and integer summations for higher performance, detecting overflow condition without exceptions.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToBigIntegerFaster(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Faster, perfectly accurate summation of ulong[] array, which uses a BigInteger accumulator for perfect accuracy,
+            and integer summations for higher performance, detecting overflow condition without exceptions.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToBigIntegerFast(System.Nullable{System.UInt64}[])">
+            <summary>
+            Faster, perfectly accurate summation of ulong?[] nullable array, which uses a BigInteger accumulator for perfect accuracy,
+            and long integer summations for higher performance, handling overflow exceptions internally.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToBigIntegerFaster(System.Int64[])">
+            <summary>
+            Faster, perfectly accurate summation of long[] array, which uses a BigInteger accumulator for perfect accuracy,
+            and integer summations for higher performance, detecting overflow condition without exceptions.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToBigIntegerFaster(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Faster, perfectly accurate summation of long[] array, which uses a BigInteger accumulator for perfect accuracy,
+            and integer summations for higher performance, detecting overflow condition without exceptions.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToBigInteger(System.Int64[])">
+            <summary>
+            Summation of long[] array, which uses a BigInteger accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToBigInteger(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, which uses a BigInteger accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimalFast(System.Int64[])">
+            <summary>
+            Faster, perfectly accurate summation of long[] array, which uses a decimal accumulator for perfect accuracy,
+            and integer summations for higher performance, handling overflow exceptions internally.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimalFaster(System.Int64[])">
+            <summary>
+            Faster, perfectly accurate summation of long[] array, which uses a BigInteger accumulator for perfect accuracy,
+            and integer summations for higher performance, detecting overflow condition without exceptions.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimalFaster(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Faster, perfectly accurate summation of long[] array, which uses a BigInteger accumulator for perfect accuracy,
+            and integer summations for higher performance, detecting overflow condition without exceptions.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimalFast(System.UInt64[])">
+            <summary>
+            Faster, perfectly accurate summation of ulong[] array, which uses a decimal accumulator for perfect accuracy,
+            and integer summations for higher performance, handling overflow exceptions internally.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimal(System.Int64[])">
+            <summary>
+            Slower, perfectly accurate summation of long[] array, which uses a decimal accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimal(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Slower, perfectly accurate summation of long[] array, which uses a decimal accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimal(System.Nullable{System.Int64}[])">
+            <summary>
+            Slower, perfectly accurate summation of long[] array, which uses a decimal accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal summation value</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimal(System.Nullable{System.Int64}[],System.Int32,System.Int32)">
+            <summary>
+            Slower, perfectly accurate summation of long[] nullable array, which uses a decimal accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Int64[])">
+            <summary>
+            Summation of long[] array.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than Int64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than Int64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Nullable{System.Int64}[])">
+            <summary>
+            Summation of long[] nullable array. Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than Int64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Nullable{System.Int64}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] nullable array. Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than Int64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToLong(System.Int32[])">
+            <summary>
+            Summation of int[] array, which uses a long accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToLong(System.Int32[],System.Int32,System.Int32)">
+            <summary>
+            Summation of int[] array, which uses a long accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToLong(System.Nullable{System.Int32}[])">
+            <summary>
+            Summation of int[] nullable array, which uses a long accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToLong(System.Nullable{System.Int32}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of int[] nullable array, which uses a long accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToLong(System.Int16[])">
+            <summary>
+            Summation of short[] array, which uses a long accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToLong(System.Int16[],System.Int32,System.Int32)">
+            <summary>
+            Summation of short[] array, which uses a long accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToLong(System.Nullable{System.Int16}[])">
+            <summary>
+            Summation of short[] nullable array, which uses a long accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToLong(System.Nullable{System.Int16}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of short[] nullable array, which uses a long accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToLong(System.SByte[])">
+            <summary>
+            Summation of sbyte[] array, which uses a long accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToLong(System.SByte[],System.Int32,System.Int32)">
+            <summary>
+            Summation of sbyte[] array, which uses a long accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToLong(System.Nullable{System.SByte}[])">
+            <summary>
+            Summation of sbyte[] nullable array, which uses a long accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToLong(System.Nullable{System.SByte}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of sbyte[] nullable array, which uses a long accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimal(System.UInt64[])">
+            <summary>
+            Summation of ulong[] array, which uses a decimal accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimal(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, which uses a decimal accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimal(System.Nullable{System.UInt64}[])">
+            <summary>
+            Summation of ulong[] nullable array, which uses a decimal accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDecimal(System.Nullable{System.UInt64}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] nullable array, which uses a decimal accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToBigInteger(System.UInt64[])">
+            <summary>
+            Summation of ulong[] array, which uses a BigInteger accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToBigInteger(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, which uses a BigInteger accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToBigInteger(System.Nullable{System.UInt64}[])">
+            <summary>
+            Summation of ulong[] nullable array, which uses a BigInteger accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToBigInteger(System.Nullable{System.UInt64}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] nullable array, which uses a BigInteger accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.UInt64[])">
+            <summary>
+            Summation of ulong[] array.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>ulong sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than UInt64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than UInt64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Nullable{System.UInt64}[])">
+            <summary>
+            Summation of ulong[] array. Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>ulong sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than UInt64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Nullable{System.UInt64}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array. Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than UInt64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToUlong(System.UInt32[])">
+            <summary>
+            Summation of uint[] array, which uses a ulong accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumUlong(System.UInt32[],System.Int32,System.Int32)">
+            <summary>
+            Summation of uint[] array, which uses a ulong accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumUlong(System.Nullable{System.UInt32}[])">
+            <summary>
+            Summation of uint[] nullable array, which uses a ulong accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToUlong(System.Nullable{System.UInt32}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of uint[] nullable array, which uses a ulong accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToUlong(System.UInt16[])">
+            <summary>
+            Summation of ushort[] array, which uses a ulong accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToUlong(System.UInt16[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ushort[] nullable array, which uses a ulong accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToUlong(System.Nullable{System.UInt16}[])">
+            <summary>
+            Summation of ushort[] nullable array, which uses a ulong accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToUlong(System.Nullable{System.UInt16}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ushort[] nullable array, which uses a ulong accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToUlong(System.Byte[])">
+            <summary>
+            Summation of byte[] array, which uses a ulong accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToUlong(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Summation of byte[] array, which uses a ulong accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToUlong(System.Nullable{System.Byte}[])">
+            <summary>
+            Summation of ulong[] nullable array, which uses a decimal accumulator for perfect accuracy.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToUlong(System.Nullable{System.Byte}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of byte[] nullable array, which uses a ulong accumulator for perfect accuracy.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Single[])">
+            <summary>
+            Summation of float[] array.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Nullable{System.Single}[])">
+            <summary>
+            Summation of float[] nullable array. Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Nullable{System.Single}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] nullable array. Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDouble(System.Single[])">
+            <summary>
+            Summation of float[] array, which uses a double accumulator for higher accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDouble(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, which uses a double accumulator for higher accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDouble(System.Nullable{System.Single}[])">
+            <summary>
+            Summation of float[] nullable array, which uses a double accumulator for higher accuracy.
+            Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDouble(System.Nullable{System.Single}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] nullable array, which uses a double accumulator for higher accuracy.
+            Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Double[])">
+            <summary>
+            Summation of double[] array.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Double[],System.Int32,System.Int32)">
+            <summary>
+            Summation of double[] array.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Nullable{System.Double}[])">
+            <summary>
+            Summation of double[] nullable array. Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Nullable{System.Double}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of double[] nullable array. Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Decimal[])">
+            <summary>
+            Summation of decimal[] array.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Decimal[],System.Int32,System.Int32)">
+            <summary>
+            Summation of decimal[] array.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Nullable{System.Decimal}[])">
+            <summary>
+            Summation of decimal[] nullable array. Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumHpc(System.Nullable{System.Decimal}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of decimal[] nullable array. Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDoubleKahanInner(System.Single[])">
+            <summary>
+            Implementation https://en.wikipedia.org/wiki/Kahan_summation_algorithm
+            Summation of float[] array, using a more accurate Kahan summation algorithm.
+            Converts input values into double and uses double for accumulation and compensation.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumKahan1(System.Double[])">
+            <summary>
+            Implementation https://en.wikipedia.org/wiki/Kahan_summation_algorithm
+            Summation of double[] array, using a more accurate Kahan summation algorithm.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumMostAccurate(System.Single,System.Single)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan more accurate floating-point summation, for two values provided.
+            </summary>
+            <param name="firstValue">first value to sum up</param>
+            <param name="secondValue">second value to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDoubleMostAccurate(System.Single,System.Single)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan more accurate floating-point summation, for two values provided.
+            Both arguments are first converted to double for higher precision result.
+            </summary>
+            <param name="firstValue">first value to sum up</param>
+            <param name="secondValue">second value to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumMostAccurate(System.Single[])">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation.
+            Summation of float[] array, using a more accurate Kahan summation algorithm.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumMostAccurate(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation.
+            Summation of float[] array, using a more accurate Kahan summation algorithm.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumMostAccurate(System.Nullable{System.Single}[])">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation.
+            Summation of float[] nullable array, using a more accurate Kahan summation algorithm.
+            Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumMostAccurate(System.Nullable{System.Single}[],System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation.
+            Summation of float[] nullable array, using a more accurate Kahan summation algorithm.
+            Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDoubleMostAccurate(System.Single[])">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation.
+            Summation of float[] array, using a more accurate Kahan summation algorithm.
+            Input array elements are converted to double for additional accuracy for all internal computations.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDoubleMostAccurate(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation.
+            Summation of float[] array, using a more accurate Kahan summation algorithm.
+            Input array elements are converted to double for additional accuracy for all internal computations.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDoubleMostAccurate(System.Nullable{System.Single}[])">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation.
+            Summation of float[] nullable array, using a more accurate Kahan summation algorithm.
+            Input array elements are converted to double for additional accuracy for all internal computations.
+            Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDoubleMostAccurate(System.Nullable{System.Single}[],System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation.
+            Summation of float[] nullable array, using a more accurate Kahan summation algorithm.
+            Input array elements are converted to double for additional accuracy for all internal computations.
+            Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumMostAccurate(System.Double,System.Double)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan more accurate floating-point summation, for two values provided.
+            </summary>
+            <param name="firstValue">first value to sum up</param>
+            <param name="secondValue">second value to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumMostAccurate(System.Double[])">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation.
+            Summation of double[] array, using a more accurate Kahan summation algorithm.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumMostAccurate(System.Double[],System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation.
+            Summation of double[] array, using a more accurate Kahan summation algorithm.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumMostAccurate(System.Nullable{System.Double}[])">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation.
+            Summation of double[] nullable array, using a more accurate Kahan summation algorithm.
+            Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumMostAccurate(System.Nullable{System.Double}[],System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation.
+            Summation of double[] nullable array, using a more accurate Kahan summation algorithm.
+            Null values are skipped.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumMoreAccurate(System.Single[],System.Int32)">
+            <summary>
+            Summation of float[] array, using a more accurate pair-wise summation algorithm.
+            Performs less work than Kahan summation, while providing more accuracy than a for loop summation.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumMoreAccurate(System.Single[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, using a more accurate pair-wise summation algorithm.
+            Performs less work than Kahan summation, while providing more accuracy than a for loop summation.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDoubleMoreAccurate(System.Single[],System.Int32)">
+            <summary>
+            Summation of float[] array, using a more accurate pair-wise summation algorithm.
+            Performs less work than Kahan summation, while providing more accuracy than a for loop summation.
+            Input array elements are converted to double for additional accuracy for all internal computations.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumToDoubleMoreAccurate(System.Single[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, using a more accurate pair-wise summation algorithm.
+            Performs less work than Kahan summation, while providing more accuracy than a for loop summation.
+            Input array elements are converted to double for additional accuracy for all internal computations.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumMoreAccurate(System.Double[],System.Int32)">
+            <summary>
+            Summation of double[] array, using a more accurate pair-wise summation algorithm.
+            Performs less work than Kahan summation, while providing more accuracy than a for loop summation.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.Algorithms.Sum.SumMoreAccurate(System.Double[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of double[] array, using a more accurate pair-wise summation algorithm.
+            Performs less work than Kahan summation, while providing more accuracy than a for loop summation.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Addition.AddToSsePar(System.Int32[],System.Int32[],System.Int32)">
+            <summary>
+            Add two int[] arrays together, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            </summary>
+            <param name="arrayA">Input array and the result array</param>
+            <param name="arrayB">Second input array</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Addition.AddToSsePar(System.Int32[],System.Int32[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Add two int[] arrays together, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            </summary>
+            <param name="arrayA">Input array and the result array</param>
+            <param name="arrayB">Second input array</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Addition.AddToPar(System.Int32[],System.Int32[],System.Int32)">
+            <summary>
+            Add two int[] arrays together, using multiple cores.
+            </summary>
+            <param name="arrayA">Input array and the result array</param>
+            <param name="arrayB">Second input array</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Addition.AddToPar(System.Int32[],System.Int32[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Add two int[] arrays together, using multiple cores.
+            </summary>
+            <param name="arrayA">Input array and the result array</param>
+            <param name="arrayB">Second input array</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.CopyParFor``1(``0[],System.Int32,``0[],System.Int32,System.Int32,System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Copy elements from the source array to the destination array, using multiple processor cores.
+            Performance is substantially higher, whenever the destination can be reused several times.
+            </summary>
+            <typeparam name="T">data type of each element</typeparam>
+            <param name="src">source array</param>
+            <param name="srcStart">source array starting index</param>
+            <param name="dst">destination array</param>
+            <param name="dstStart">destination array starting index</param>
+            <param name="length">number of array elements to copy</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.CopyPar``1(``0[],System.Int32,``0[],System.Int32,System.Int32,System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Copy elements from the source array to the destination array, using multiple processor cores.
+            Performance is even higher whenever the destination array can be reused several times.
+            </summary>
+            <typeparam name="T">data type of each array element</typeparam>
+            <param name="src">source array</param>
+            <param name="dst">destination array</param>
+            <param name="length">number of array elements to copy</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.CopyPar``1(``0[],``0[],System.Int32,System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Copy elements from the source array to the destination array, using multiple processor cores.
+            Performance is even higher whenever the destination array can be reused several times.
+            </summary>
+            <typeparam name="T">data type of each array element</typeparam>
+            <param name="src">source array</param>
+            <param name="dst">destination array</param>
+            <param name="length">number of array elements to copy</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.CopyPar``1(``0[],``0[],System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Copy elements from the source array to the destination array, using multiple processor cores.
+            Performance is even higher whenever the destination array can be reused several times.
+            </summary>
+            <typeparam name="T">data type of each array element</typeparam>
+            <param name="src">source array</param>
+            <param name="dst">destination array</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.CopyToPar``1(``0[],``0[],System.Int32,System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Copy elements from the source array to the destination array, starting at an index within the destination, using multiple processor cores.
+            Performance is even higher whenever the destination array can be reused several times.
+            </summary>
+            <typeparam name="T">data type of each array element</typeparam>
+            <param name="src">source array</param>
+            <param name="dst">destination array</param>
+            <param name="dstStart">starting index of the destination array</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.CopySse(System.Int32[],System.Int32,System.Int32[],System.Int32,System.Int32)">
+            <summary>
+            Copy elements from the source array of integers to the destination array, using a single core with data parallel SIMD/SSE instructions.
+            Performance is substantially higher, whenever the destination can be reused several times.
+            </summary>
+            <param name="src">source array</param>
+            <param name="srcStart">source array starting index</param>
+            <param name="dst">destination array</param>
+            <param name="dstStart">destination array starting index</param>
+            <param name="length">number of array elements to copy</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.CopySsePar(System.Int32[],System.Int32,System.Int32[],System.Int32,System.Int32,System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Copy elements from the source array of integers to the destination array, using a single core with data parallel SIMD/SSE instructions.
+            Performance is substantially higher, whenever the destination can be reused several times.
+            </summary>
+            <param name="src">source array</param>
+            <param name="srcStart">source array starting index</param>
+            <param name="dst">destination array</param>
+            <param name="dstStart">destination array starting index</param>
+            <param name="length">number of array elements to copy</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.ToArrayPar``1(``0[],System.Int32,System.Int32,System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Copy elements from the source array to the allocated destination array, using multiple processor cores.
+            Slower than the version with destination array argument, because the newly allocated destination array has not yet been paged in.
+            </summary>
+            <typeparam name="T">data type of each element</typeparam>
+            <param name="src">source array</param>
+            <param name="srcStart">source array starting index</param>
+            <param name="length">number of array elements to copy</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.ToArrayPar``1(``0[],System.Int32,System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Copy elements from the source array to the allocated destination array, using multiple processor cores.
+            Slower than the version with destination array argument, because the newly allocated destination array has not yet been paged in.
+            been paged in.
+            </summary>
+            <typeparam name="T">data type of each array element</typeparam>
+            <param name="src">source array</param>
+            <param name="length">number of array elements to copy</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.ToArrayPar``1(``0[],System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Copy elements from the source array to a newly allocated destination array, using multiple processor cores.
+            Slower than the version with destination array argument, because the newly allocated destination array has not yet been paged in.
+            </summary>
+            <typeparam name="T">data type of each array element</typeparam>
+            <param name="src">source array</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.ToArrayPar``1(System.Collections.Generic.List{``0},System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Create a new Array from the source List
+            </summary>
+            <typeparam name="T">data type of each element</typeparam>
+            <param name="src">source List</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.ToArrayPar``1(System.Collections.Generic.List{``0},System.Int32,System.Int32,System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Create a new Array from a portion of source List
+            </summary>
+            <typeparam name="T">data type of each element</typeparam>
+            <param name="src">source List</param>
+            <param name="srcStart">starting index within src List</param>
+            <param name="length">number of elements to be copied</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.ToArrayPar``1(System.Collections.Generic.List{``0},System.Int32,System.Int32,System.Int32,System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Copy elements from the source List to the destination Array
+            </summary>
+            <typeparam name="T">data type of each element</typeparam>
+            <param name="src">source List</param>
+            <param name="srcStart">source List starting index</param>
+            <param name="dstStart">destination Array starting index</param>
+            <param name="length">number of Array elements to copy</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.CopyToPar``1(System.Collections.Generic.List{``0},``0[],System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Copy to an existing Array from the source List
+            </summary>
+            <typeparam name="T">data type of each element</typeparam>
+            <param name="src">source List</param>
+            <param name="dst">destination array</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.CopyToPar``1(System.Collections.Generic.List{``0},``0[],System.Int32,System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Copy to an existing Array from a portion of source List
+            </summary>
+            <typeparam name="T">data type of each element</typeparam>
+            <param name="src">source List</param>
+            <param name="dst">destination array</param>
+            <param name="dstStart">starting index within dst Array</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Copy.CopyToPar``1(System.Collections.Generic.List{``0},System.Int32,``0[],System.Int32,System.Int32,System.Nullable{System.ValueTuple{System.Int32,System.Int32}})">
+            <summary>
+            Copy to an existing Array from a portion of source List
+            </summary>
+            <typeparam name="T">data type of each element</typeparam>
+            <param name="src">source List</param>
+            <param name="srcStart">source List starting index</param>
+            <param name="dst">destination array</param>
+            <param name="dstStart">destination Array starting index</param>
+            <param name="length">number of Array elements to copy</param>
+            <param name="parSettings">minWorkQuanta = number of array elements efficient to process per core; degreeOfParallelism = maximum number of CPU cores that will be used</param>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.StandardDeviationSse(System.Int32[])">
+            <summary>
+            Standard deviation of an array of integers. Uses SSE data-parallel instruction within each core.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.StandardDeviationSsePar(System.Int32[])">
+            <summary>
+            Standard deviation of an array of integers. Uses multiple processor cores and SSE instruction within each core for multiple types of parallellism.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.StandardDeviationSse(System.Int64[])">
+            <summary>
+            Standard deviation of an array of long integers. Uses SSE data-parallel instruction within each core.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.StandardDeviationSsePar(System.Int64[])">
+            <summary>
+            Standard deviation of an array of long integers. Uses multiple processor cores and SSE instruction within each core for multiple types of parallellism.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.StandardDeviationSse(System.UInt64[])">
+            <summary>
+            Standard deviation of an array of ulong integers. Uses SSE data-parallel instruction within each core.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.StandardDeviationSsePar(System.UInt64[])">
+            <summary>
+            Standard deviation of an array of long integers. Uses multiple processor cores and SSE instruction within each core for multiple types of parallellism.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.StandardDeviationSse(System.Single[])">
+            <summary>
+            Standard deviation of an array of floats. Uses SSE data-parallel instruction within each core.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.StandardDeviationSsePar(System.Single[])">
+            <summary>
+            Standard deviation of an array of floats. Uses multiple processor cores and SSE instruction within each core for multiple types of parallellism.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.StandardDeviationToDoubleSse(System.Single[])">
+            <summary>
+            Standard deviation of an array of floats, with all computations using double. Uses SSE data-parallel instruction within each core.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.StandardDeviationToDoubleSsePar(System.Single[])">
+            <summary>
+            Standard deviation of an array of floats, with all computations using double. Uses multiple processor cores and SSE instruction within each core for multiple types of parallellism.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.StandardDeviationSse(System.Double[])">
+            <summary>
+            Standard deviation of an array of doubles. Uses SSE data-parallel instruction within each core.
+            </summary>
+            <param name="values">An array to compute on</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.StandardDeviationSsePar(System.Double[])">
+            <summary>
+            Standard deviation of an array of doubles. Uses multiple processor cores and SSE instruction within each core for multiple types of parallellism.
+            </summary>
+            <param name="values">An array to compute on</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.StandardDeviationMostAccurateSse(System.Double[])">
+            <summary>
+            Standard deviation of an array of doubles. Uses SSE data-parallel instruction within each core.
+            </summary>
+            <param name="values">An array to compute on</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.StandardDeviationMostAccurateSsePar(System.Double[])">
+            <summary>
+            Standard deviation of an array of doubles. Uses multiple processor cores and SSE instruction within each core for multiple types of parallellism.
+            </summary>
+            <param name="values">An array to compute on</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.MeanAbsoluteDeviationSse(System.Int32[])">
+            <summary>
+            Mean absolute deviation of an array of integers. Uses SSE data-parallel instruction within each core.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>result as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.MeanAbsoluteDeviationSsePar(System.Int32[])">
+            <summary>
+            Mean absolute deviation of an array of integers. Uses multiple processor cores and SSE instruction within each core for multiple types of parallellism.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>result as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.MeanAbsoluteDeviationSse(System.Single[])">
+            <summary>
+            Mean absolute deviation of an array of floats. Uses SSE data-parallel instruction within each core.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>result as a float</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.MeanAbsoluteDeviationSsePar(System.Single[])">
+            <summary>
+            Mean absolute deviation of an array of floats. Uses multiple processor cores and SSE instruction within each core for multiple types of parallellism.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>result as a float</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.MeanAbsoluteDeviationToDoubleSse(System.Single[])">
+            <summary>
+            Mean absolute deviation of an array of floats, with all computations using double. Uses SSE data-parallel instruction within each core.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>standard deviation as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.MeanAbsoluteDeviationToDoubleSsePar(System.Single[])">
+            <summary>
+            Mean absolute deviation of an array of floats, with all computations using double. Uses multiple processor cores and SSE instruction within each core for multiple types of parallellism.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>result as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.MeanAbsoluteDeviationSse(System.Double[])">
+            <summary>
+            Mean absolute deviation of an array of doubles. Uses SSE data-parallel instruction within each core.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>result as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.MeanAbsoluteDeviationSsePar(System.Double[])">
+            <summary>
+            Mean absolute deviation of an array of doubles. Uses multiple processor cores and SSE instruction within each core for multiple types of parallellism.
+            </summary>
+            <param name="values">An array to sum up</param>
+            <returns>result as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.MeanAbsoluteDeviationTestPar(System.Int32[])">
+            <summary>
+            Mean absolute deviation of an array of ints.
+            </summary>
+            <param name="values">An array of ints as input data</param>
+            <returns>result as a double</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.DivideAndConquerTwoTypesPar``2(``0[],System.Int32,System.Int32,System.Double,System.Func{``0[],System.Int32,System.Int32,System.Double,``1},System.Func{``1,``1,``1},System.Int32,System.Int32)">
+            <summary>
+            Parallel Divide and Conquer generic pattern, using input type T and output type T2.
+            </summary>
+            <param name="arrayToProcess">An input array to be processed</param>
+            <param name="start">starting index of the first element to be processed (inclusive)</param>
+            <param name="length">number of elements to be processed</param>
+            <param name="baseCase">function for the recursion base case (leaf node). The two parameters are start and length</param>
+            <param name="reduce">function for combining the two recursive results</param>
+            <param name="thresholdPar">if array is larger than this value, then parallel processing will be used, otherwise serial processing will be used by invoking the baseCase function</param>
+            <param name="degreeOfParallelism">amount of parallelism to be used - i.e. number of computational cores. When set to zero or negative, all available cores will be utilized.
+            When set to 1, then a single core will be used. When set to > 1, then that many cores will be used.</param>
+            <returns>result value</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.DivideAndConquerTwoTypesParLR``2(``0[],System.Int32,System.Int32,System.Double,System.Func{``0[],System.Int32,System.Int32,System.Double,``1},System.Func{``1,``1,``1},System.Int32,System.Int32)">
+            Note that the baseCase function is on (start, length) interface and not (left, right) because the pulic divide-and-conquer function has that interface
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Statistics.DivideAndConquerParLR``1(``0[],System.Int32,System.Int32,System.Double,System.Func{``0[],System.Int32,System.Int32,System.Double,``0},System.Func{``0,``0,``0},System.Int32,System.Int32)">
+            Note that the baseCase function is on (start, length) interface and not (left, right) because the pulic divide-and-conquer function has that interface
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSse(System.SByte[])">
+            <summary>
+            Summation of sbyte[] array, which uses a long accumulator for perfect accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSse(System.SByte[],System.Int32,System.Int32)">
+            <summary>
+            Summation of sbyte[] array, which uses a long accumulator for perfect accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSse(System.Byte[])">
+            <summary>
+            Summation of byte[] array, which uses a ulong accumulator for perfect accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSse(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Summation of byte[] array, which uses a ulong accumulator for perfect accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSse(System.Int16[])">
+            <summary>
+            Summation of short[] array, which uses a long accumulator for perfect accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSse(System.Int16[],System.Int32,System.Int32)">
+            <summary>
+            Summation of short[] array, which uses a long accumulator for perfect accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSse(System.UInt16[])">
+            <summary>
+            Summation of ushort[] array, which uses a ulong accumulator for perfect accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSse(System.UInt16[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ushort[] array, which uses a ulong accumulator for perfect accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSse(System.Int32[])">
+            <summary>
+            Summation of int[] array, which uses a long accumulator for perfect accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSse(System.Int32[],System.Int32,System.Int32)">
+            <summary>
+            Summation of int[] array, which uses a long accumulator for perfect accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSse(System.Nullable{System.Int32}[])">
+            <summary>
+            Summation of int?[] nullable array, which uses a long accumulator for perfect accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSse(System.Nullable{System.Int32}[],System.Int32,System.Int32)">
+            <summary>
+            Summation of int?[] nullable array, which uses a long accumulator for perfect accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Null values are skipped. Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSse(System.UInt32[])">
+            <summary>
+            Summation of uint[] array, which uses a ulong accumulator for perfect accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSse(System.UInt32[],System.Int32,System.Int32)">
+            <summary>
+            Summation of uint[] array, which uses a ulong accumulator for perfect accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Will not throw overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSse(System.Int64[])">
+            <summary>
+            Summation of long[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Caution: Will not throw an overflow exception for the majority of the array, but instead will wrap around to negatives, when the sum goes beyond Int64.MaxValue
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than Int64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSse(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Caution: Will not throw an overflow exception for the majority of the array, but instead will wrap around to negatives, when the sum goes beyond Int64.MaxValue
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than Int64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumCheckedSse(System.Int64[])">
+            <summary>
+            Summation of long[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Throws a System.OverflowException when the sum goes beyond Int64.MaxValue, even for the portion of the array that is processed using SSE instructions.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than Int64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumCheckedSse(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Throws a System.OverflowException when the sum goes beyond Int64.MaxValue, even for the portion of the array that is processed using SSE instructions.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than Int64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalSseFaster(System.Int64[])">
+            <summary>
+            Summation of long[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Uses a long accumulator for faster performance while detecting overflow/underflow without exceptions and returning a decimal for perfect accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalSseFaster(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Uses a long accumulator for faster performance while detecting overflow/underflow without exceptions and returning a decimal for perfect accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerSseFaster(System.Int64[])">
+            <summary>
+            Summation of long[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Uses a long accumulator for faster performance while detecting overflow/underflow without exceptions and returning a decimal for perfect accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerSseFaster(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Uses a long accumulator for faster performance while detecting overflow/underflow without exceptions and returning a decimal for perfect accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSse(System.UInt64[])">
+            <summary>
+            Summation of ulong[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Caution: Will not throw an overflow exception for the majority of the array, but instead will wrap around to smaller values, when the sum goes beyond UInt64.MaxValue
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>ulong sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than UInt64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSse(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Caution: Will not throw an overflow exception for the majority of the array, but instead will wrap around to smaller values, when the sum goes beyond UInt64.MaxValue
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than UInt64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumCheckedSse(System.UInt64[])">
+            <summary>
+            Summation of ulong[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Throws a System.OverflowException when the sum goes beyond UInt64.MaxValue, even for the portion of the array that is processed using SSE instructions.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>ulong sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than UInt64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumCheckedSse(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Throws a System.OverflowException when the sum goes beyond UInt64.MaxValue, even for the portion of the array that is processed using SSE instructions.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+            <exception>TSource:System.OverflowException: when the sum value is greater than UInt64.MaxValue</exception>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalSseFaster(System.UInt64[])">
+            <summary>
+            Summation of ulong[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Uses a ulong accumulator for faster performance while detecting overflow without exceptions and returning a decimal for perfect accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalSseFaster(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Uses a ulong accumulator for faster performance while detecting overflow without exceptions and returning a decimal for perfect accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalSseEvenFaster(System.UInt64[])">
+            <summary>
+            Summation of ulong[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Uses a 128-bit accumulator for faster performance while detecting overflow without exceptions and returning a decimal for perfect accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalSseEvenFaster(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Uses a 128-bit accumulator for faster performance while detecting overflow without exceptions and returning a decimal for perfect accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerSseEvenFaster(System.UInt64[])">
+            <summary>
+            Summation of ulong[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Uses a 128-bit accumulator for faster performance while detecting overflow without exceptions and returning a BigInteger for perfect accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerSseEvenFaster(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Uses a 128-bit accumulator for faster performance while detecting overflow without exceptions and returning a BigInteger for perfect accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerSseFaster(System.UInt64[])">
+            <summary>
+            Summation of ulong[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Uses a ulong accumulator for faster performance while detecting overflow without exceptions and returning a BigInteger for perfect accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerSseFaster(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            Uses a ulong accumulator for faster performance while detecting overflow without exceptions and returning a BigInteger for perfect accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSse(System.Single[])">
+            <summary>
+            Summation of float[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSse(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDoubleSse(System.Single[])">
+            <summary>
+            Summation of float[] array, using a double accumulator for higher accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDoubleSse(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, using a double accumulator for higher accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSse(System.Double[])">
+            <summary>
+            Summation of double[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSse(System.Double[],System.Int32,System.Int32)">
+            <summary>
+            Summation of double[] array, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSseMostAccurate(System.Single[])">
+            <summary>
+            Summation of float[] array, using Neumaier variation of Kahan summation for higher accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSseMostAccurate(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, using Neumaier variation of Kahan summation for higher accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDoubleSseMostAccurate(System.Single[])">
+            <summary>
+            Summation of float[] array, using Neumaier variation of Kahan summation along with double precision for higher accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDoubleSseMostAccurate(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, using Neumaier variation of Kahan summation along with double precision for higher accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSseMostAccurate(System.Double[])">
+            <summary>
+            Summation of double[] array, using Neumaier variation of Kahan summation for higher accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSseMostAccurate(System.Double[],System.Int32,System.Int32)">
+            <summary>
+            Summation of double[] array, using Neumaier variation of Kahan summation for higher accuracy, using data parallel SIMD/SSE instructions for higher performance on a single core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSseParDac(System.SByte[],System.Int32,System.Int32)">
+            <summary>
+            Summation of sbyte[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a long accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSseParDac(System.SByte[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of sbyte[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a long accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSsePar(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Summation of byte[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a ulong accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongPar(System.Byte[],System.Int32)">
+            <summary>
+            Summation of byte[] array, using multiple cores.
+            Uses a ulong accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongPar(System.Byte[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of byte[] array, using multiple cores.
+            Uses a ulong accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongPar(System.UInt16[],System.Int32)">
+            <summary>
+            Summation of ushort[] array, using multiple cores.
+            Uses a ulong accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongPar(System.UInt16[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of byte[] array, using multiple cores.
+            Uses a ulong accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongPar(System.UInt32[],System.Int32)">
+            <summary>
+            Summation of uint[] array, using multiple cores.
+            Uses a ulong accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongPar(System.UInt32[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of uint[] array, using multiple cores.
+            Uses a ulong accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongPar(System.SByte[],System.Int32)">
+            <summary>
+            Summation of sbyte[] array, using multiple corese.
+            Uses a long accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongPar(System.SByte[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of sbyte[] array, using multiple cores.
+            Uses a long accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongPar(System.Int16[],System.Int32)">
+            <summary>
+            Summation of short[] array, using multiple cores.
+            Uses a long accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongPar(System.Int16[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of short[] array, using multiple cores.
+            Uses a long accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongPar(System.Int32[],System.Int32)">
+            <summary>
+            Summation of int[] array, using multiple cores.
+            Uses a long accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongPar(System.Int32[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of short[] array, using multiple cores.
+            Uses a long accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSsePar(System.SByte[],System.Int32)">
+            <summary>
+            Summation of sbyte[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a long accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSsePar(System.SByte[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of sbyte[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a long accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSsePar(System.Int16[],System.Int32)">
+            <summary>
+            Summation of short[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a long accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSsePar(System.Int16[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of short[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a long accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSsePar(System.Int32[],System.Int32)">
+            <summary>
+            Summation of int[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a long accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSsePar(System.Int32[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of int[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a long accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSsePar(System.Int64[],System.Int32)">
+            <summary>
+            Summation of long[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a long accumulator for perfect accuracy.
+            Warning: will not throw an arithmetic overflow exception, wrapping around to the opposite sign quietly.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSsePar(System.Int64[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a long accumulator for perfect accuracy.
+            Warning: will not throw an arithmetic overflow exception, wrapping around to the opposite sign quietly.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSsePar(System.Byte[],System.Int32)">
+            <summary>
+            Summation of byte[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a ulong accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSsePar(System.Byte[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of byte[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a ulong accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSsePar(System.UInt16[],System.Int32)">
+            <summary>
+            Summation of ushort[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a ulong accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSsePar(System.UInt16[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of byte[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a ulong accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSsePar(System.UInt32[],System.Int32)">
+            <summary>
+            Summation of uint[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a ulong accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSsePar(System.UInt32[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of uint[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a ulong accumulator for perfect accuracy. Will not throw an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSsePar(System.UInt64[],System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a ulong accumulator for perfect accuracy.
+            Warning: will not throw an arithmetic overflow exception, wrapping around to smaller values quietly.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSsePar(System.UInt64[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a ulong accumulator for perfect accuracy.
+            Warning: will not throw an arithmetic overflow exception, wrapping around to smaller values quietly.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <param name="degreeOfParallelism">number of computational cores to use</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSseParDac(System.Byte[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of byte[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a ulong accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSseParDac(System.Int16[],System.Int32,System.Int32)">
+            <summary>
+            Summation of short[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a long accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSseParDac(System.Int16[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of short[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a long accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSseParDac(System.UInt16[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ushort[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a ulong accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSseParDac(System.UInt16[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of ushort[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a ulong accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSseParDac(System.Int32[],System.Int32,System.Int32)">
+            <summary>
+            Summation of int[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a long accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToLongSsePar(System.Int32[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of int[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a long accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSseParDac(System.UInt32[],System.Int32,System.Int32)">
+            <summary>
+            Summation of uint[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a ulong accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToUlongSsePar(System.UInt32[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of uint[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a ulong accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSsePar(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using multiple cores, and using data parallel SIMD/SSE instructions on each core, for higher performance within each core.
+            Warning: this function will quietly overflow, not throwing an arithmetic overflow exception, wrapping around to the opposite sign value.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSsePar(System.Int64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using multiple cores, and using data parallel SIMD/SSE instructions on each core, for higher performance within each core.
+            Warning: this function will quietly overflow, not throwing an arithmetic overflow exception, wrapping around to the opposite sign value.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>long sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalPar(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using multiple cores, for higher performance within each core.
+            Uses a decimal accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalPar(System.Int64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using multiple cores, for higher performance within each core.
+            Uses a decimal accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalFasterPar(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using multiple cores, for higher performance within each core.
+            Uses a long accumulator for faster performance while detecting overflow without exceptions and returning a decimal for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalFasterPar(System.Int64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using multiple cores, for higher performance within each core.
+            Uses a long accumulator for faster performance while detecting overflow without exceptions and returning a decimal for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalSseFasterPar(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using multiple cores, and using data parallel SIMD/SSE instructions on each core, for higher performance within each core.
+            Uses a long accumulator for faster performance while detecting overflow without exceptions and returning a decimal for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalSseFasterPar(System.Int64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using multiple cores, and using data parallel SIMD/SSE instructions on each core, for higher performance within each core.
+            Uses a long accumulator for faster performance while detecting overflow without exceptions and returning a decimal for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerFasterPar(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using multiple cores, for higher performance within each core.
+            Uses a long accumulator for faster performance while detecting overflow without exceptions and returning a BigInteger for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerFasterPar(System.Int64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using multiple cores, for higher performance within each core.
+            Uses a long accumulator for faster performance while detecting overflow without exceptions and returning a BigInteger for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerSseFasterPar(System.Int64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using multiple cores, and using data parallel SIMD/SSE instructions on each core, for higher performance within each core.
+            Uses a long accumulator for faster performance while detecting overflow without exceptions and returning a BigInteger for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerSseFasterPar(System.Int64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of long[] array, using multiple cores, and using data parallel SIMD/SSE instructions on each core, for higher performance within each core.
+            Uses a long accumulator for faster performance while detecting overflow without exceptions and returning a BigInteger for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalPar(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, for higher performance within each core.
+            Uses a decimal accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalPar(System.UInt64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, for higher performance within each core.
+            Uses a decimal accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalFasterPar(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, for higher performance within each core.
+            Uses a ulong accumulator for faster performance while detecting overflow without exceptions and returning a decimal for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalFasterPar(System.UInt64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, for higher performance within each core.
+            Uses a ulong accumulator for faster performance while detecting overflow without exceptions and returning a decimal for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalSseFasterPar(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, and using data parallel SIMD/SSE instructions on each core, for higher performance within each core.
+            Uses a ulong accumulator for faster performance while detecting overflow without exceptions and returning a decimal for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalSseFasterPar(System.UInt64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, and using data parallel SIMD/SSE instructions on each core, for higher performance within each core.
+            Uses a ulong accumulator for faster performance while detecting overflow without exceptions and returning a decimal for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalSseEvenFasterPar(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, and using data parallel SIMD/SSE instructions on each core, for higher performance within each core.
+            Uses a 128-bit accumulator for faster performance while detecting overflow without exceptions and returning a decimal for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDecimalSseEvenFasterPar(System.UInt64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, and using data parallel SIMD/SSE instructions on each core, for higher performance within each core.
+            Uses a 128-bit accumulator for faster performance while detecting overflow without exceptions and returning a decimal for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerPar(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, for higher performance within each core.
+            Uses a BigInteger accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerPar(System.UInt64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, for higher performance within each core.
+            Uses a BigInteger accumulator for perfect accuracy. Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerFasterPar(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, for higher performance within each core.
+            Uses a ulong accumulator for faster performance while detecting overflow without exceptions and returning a BigInteger for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerFasterPar(System.UInt64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, for higher performance within each core.
+            Uses a ulong accumulator for faster performance while detecting overflow without exceptions and returning a BigInteger for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerSseFasterPar(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, and using data parallel SIMD/SSE instructions on each core, for higher performance within each core.
+            Uses a ulong accumulator for faster performance while detecting overflow without exceptions and returning a BigInteger for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerSseFasterPar(System.UInt64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, and using data parallel SIMD/SSE instructions on each core, for higher performance within each core.
+            Uses a ulong accumulator for faster performance while detecting overflow without exceptions and returning a BigInteger for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerSseEvenFasterPar(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, and using data parallel SIMD/SSE instructions on each core, for higher performance within each core.
+            Uses a 128-bit accumulator for faster performance while detecting overflow without exceptions and returning a BigInteger for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToBigIntegerSseEvenFasterPar(System.UInt64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, and using data parallel SIMD/SSE instructions on each core, for higher performance within each core.
+            Uses a 128-bit accumulator for faster performance while detecting overflow without exceptions and returning a BigInteger for perfect accuracy.
+            Will not trow an overflow exception.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>BigInteger sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSseParDac(System.UInt64[],System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSseParDac(System.UInt64[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of ulong[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>ulong sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumPar(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumPar(System.Single[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDoublePar(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a double accumulator for higher accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDoublePar(System.Single[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a double accumulator for higher accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSsePar(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSsePar(System.Single[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDoubleSsePar(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a double accumulator for higher accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDoubleSsePar(System.Single[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of float[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            Uses a double accumulator for higher accuracy.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumPar(System.Double[],System.Int32,System.Int32)">
+            <summary>
+            Summation of double[] array, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumPar(System.Double[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of double[] array, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSsePar(System.Double[],System.Int32,System.Int32)">
+            <summary>
+            Summation of double[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSsePar(System.Double[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of double[] array, using multiple cores, and using data parallel SIMD/SSE instructions for higher performance within each core.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumParMostAccurate(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation: more accurate than for loop summation.
+            Summation of float[] array, using a more accurate Kahan summation algorithm, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumParMostAccurate(System.Single[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation: more accurate than for loop summation.
+            Summation of float[] array, using a more accurate Kahan summation algorithm, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDoubleParMostAccurate(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation: more accurate than for loop summation.
+            Summation of float[] array, using a more accurate Kahan summation algorithm, using a double accumulator for higher accuracy, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDoubleParMostAccurate(System.Single[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation: more accurate than for loop summation.
+            Summation of float[] array, using a more accurate Kahan summation algorithm, using a double accumulator for higher accuracy, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSseParMostAccurate(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation: more accurate than for loop summation.
+            Summation of float[] array, using a more accurate Kahan summation algorithm, using data parallel SIMD/SSE instructions for higher performance within each core, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSseParMostAccurate(System.Single[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation: more accurate than for loop summation.
+            Summation of float[] array, using a more accurate Kahan summation algorithm, using data parallel SIMD/SSE instructions for higher performance within each core, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>float sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDoubleSseParMostAccurate(System.Single[],System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation: more accurate than for loop summation.
+            Summation of float[] array, using a more accurate Kahan summation algorithm, using a double precision accumulator for higher accuracy, using data parallel SIMD/SSE instructions for higher performance within each core, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumToDoubleSseParMostAccurate(System.Single[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation: more accurate than for loop summation.
+            Summation of float[] array, using a more accurate Kahan summation algorithm, using a double precision accumulator for higher accuracy, using data parallel SIMD/SSE instructions for higher performance within each core, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumParMostAccurate(System.Double[],System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation: more accurate than for loop summation.
+            Summation of double[] array, using a more accurate Kahan summation algorithm, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumParMostAccurate(System.Double[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation: more accurate than for loop summation.
+            Summation of double[] array, using a more accurate Kahan summation algorithm, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSseParMostAccurate(System.Double[],System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation: more accurate than for loop summation.
+            Summation of double[] array, using a more accurate Kahan summation algorithm, using data parallel SIMD/SSE instructions for higher performance within each core, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumSseParMostAccurate(System.Double[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Implementation of the Neumaier variation of Kahan floating-point summation: more accurate than for loop summation.
+            Summation of double[] array, using a more accurate Kahan summation algorithm, using data parallel SIMD/SSE instructions for higher performance within each core, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>double sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumPar(System.Decimal[],System.Int32,System.Int32)">
+            <summary>
+            Summation of decimal[] array, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumPar(System.Decimal[],System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Summation of decimal[] array, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum up</param>
+            <param name="startIndex">index of the starting element for the summation</param>
+            <param name="length">number of array elements to sum up</param>
+            <returns>decimal sum</returns>
+        </member>
+        <member name="M:HPCsharp.ParallelAlgorithms.Sum.SumPar(System.Numerics.BigInteger[],System.Int32,System.Int32)">
+            <summary>
+            Summation of BigInteger[] array, using multiple cores.
+            </summary>
+            <param name="arrayToSum">An array to sum u

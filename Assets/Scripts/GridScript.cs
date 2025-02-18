@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using CodeMonkey.Utils;
 using System;
+using System.Threading.Tasks;
 
 public class GridScript : MonoBehaviour
 {
@@ -13,61 +14,113 @@ public class GridScript : MonoBehaviour
     public Vector2 gridPos;
     public List<int> gridContent;
     public int chooseNeighborSearch;
-    public int[] cellKeys;
     public int[] cellCounter;
-    public int[] sortedParticleArray;
+    public int[] cellLinkedListParticles;
+    public long[] cellLinkedListCellIndices;
+    public (long cellIndex, int particleIndex)[] sortedParticleArray;
     public int[][] hashTable;
     public int[] compactHashTable;
-    public int[][] compactArray;
+    public List<int[]> compactList;
+    public List<int> compactListHashs;
+    public List<List<int>> compactList2;
     public int[] numParticlesCompactArray;
     public int[] countHashTable;
+    public int[] displayCountHashTable;
     public int numHashTableEntries;
     // public int[] displayHashTable;
     public long[,] cellZIndices;
     private int firstPrimeNumber = 73856093;
     private int secondPrimeNumber = 83492791;
-    private int hashTableLength;
-    private int compactHashTableLength;
+    public int hashTableLength;
+    public int sortingInterval;
     public bool parallelSearchActivated;
     public bool drawGridEnabled;
-    private bool sortValues;
     public bool randomInitializedParticles;
-
-    private int texResolution;
-    private Camera mainCamera;
+    public long[][] neighboringCellIndices;
+    public int numParticles;
     // Start is called before the first frame update
     void Start()
     {
         simulation = GameObject.FindGameObjectWithTag("Simulation").GetComponent<SimulationScript>();
         // Decide size of grid according to the test scene
-        if (simulation.tests <= 3)
+        if (simulation.tests == 0)
         {
+            width = 50;
+            height = 50;
+            numParticles = 1225;
+        }
+        if (simulation.tests == 1)
+        {
+            width = 50;
+            height = 50;
+            numParticles = 1225;
+        }
+        else if (simulation.tests == 3)
+        {
+            drawGridEnabled = false;
             width = 200;
             height = 200;
+            numParticles = 40000;
         }
         else if (simulation.tests == 4)
         {
+            drawGridEnabled = false;
             width = 250;
             height = 250;
+            simulation.stiffness = 300;
+            numParticles = 160000;
         }
         else if (simulation.tests == 5)
         {
+            drawGridEnabled = false;
             width = 600;
             height = 600;
+            numParticles = 1000000;
         }
         else if (simulation.tests == 6)
         {
+            drawGridEnabled = false;
             width = 1300;
             height = 1300;
+            numParticles = 4000000;
         }
         else if (simulation.tests == 7)
         {
+            drawGridEnabled = false;
             width = 1700;
             height = 1700;
+            numParticles = 9000000;
+        }
+        else if (simulation.tests == 8)
+        {
+            drawGridEnabled = false;
+            width = 2100;
+            height = 2100;
+            numParticles = 16000000;
+        }
+        else if (simulation.tests == 9)
+        {
+            drawGridEnabled = false;
+            width = 2500;
+            height = 2500;
+            numParticles = 25000000;
+        }
+        else if (simulation.tests == 10)
+        {
+            drawGridEnabled = false;
+            width = 2800;
+            height = 2800;
         }
         grid = new List<int>[width, height];
-        cellCounter = new int[(width * height * 2) + 1];
-        hashTable = new int[width * height * 2][];
+        if (chooseNeighborSearch == 1)
+        {
+            cellCounter = new int[(width * height * 2) + 1];
+        }
+        else if (chooseNeighborSearch == 2)
+        {
+            cellCounter = new int[(width * height * 2) + 1];
+        }
+        hashTable = new int[numParticles * 4][];
         hashTableLength = hashTable.Length;
         for (int i = 0; i < hashTableLength; i++)
         {
@@ -78,28 +131,20 @@ public class GridScript : MonoBehaviour
             }
         }
         countHashTable = new int[hashTableLength];
+        displayCountHashTable = new int[hashTableLength];
 
         // compact hashing
-        compactHashTable = new int[width * height * 2];
+        compactHashTable = new int[hashTableLength];
         for (int i = 0; i < compactHashTable.Length; i++)
         {
             compactHashTable[i] = -1;
         }
 
-
-        // Precompute z-indices for all cells
-        cellZIndices = new long[width, height];
-        for (int i = 0; i < width; i++)
+        neighboringCellIndices = new long[hashTableLength][];
+        for (int i = 0; i < hashTableLength; i++)
         {
-            for (int j = 0; j < height; j++)
-            {
-                cellZIndices[i, j] = computeZIndexForCell(i, j);
-            }
+            neighboringCellIndices[i] = new long[9];
         }
-
-        // Initialize simulation variables
-        texResolution = simulation.texResolution;
-        mainCamera = simulation.mainCamera;
     }
 
     // Update is called once per frame
@@ -107,8 +152,6 @@ public class GridScript : MonoBehaviour
     {
         sortedParticleArray = simulation.particleArray;
         gridContent = grid[(int)gridPos.x, (int)gridPos.y];
-
-        // countHashTableEntries();
     }
 
     // Interleave to 64 bit
@@ -196,29 +239,38 @@ public class GridScript : MonoBehaviour
                 Vector2 texThree = computeWorldCoords(x + 1, y);
                 if (drawGridEnabled)
                 {
-                    TextMesh text = UtilsClass.CreateWorldText(computeHashIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
-                    text.characterSize = 0.05f;
-                    // if (chooseNeighborSearch == 0)
-                    // {
-                    //     TextMesh text = UtilsClass.CreateWorldText("(" + x + "," + y + ")", null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
-                    //     text.characterSize = 0.05f;
-                    // }
-                    // else if (chooseNeighborSearch == 1)
-                    // {
-                    //     TextMesh text = UtilsClass.CreateWorldText(computeUniqueCellIndex(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
-                    //     text.characterSize = 0.05f;
-                    // }
-                    // else if (chooseNeighborSearch == 2)
-                    // {
-                    //     TextMesh text = UtilsClass.CreateWorldText(computeZIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
-                    //     text.characterSize = 0.05f;
-                    // }
-                    // else if (chooseNeighborSearch == 3)
-                    // {
-                    //     TextMesh text = UtilsClass.CreateWorldText(computeHashIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
-                    //     text.characterSize = 0.05f;
-                    // }
-                    // TextMesh text = UtilsClass.CreateWorldText(Convert.ToString(computeZIndexForCell(x, y), 2), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                    // TextMesh text = UtilsClass.CreateWorldText(computeUniqueCellIndex(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                    // text.characterSize = 0.05f;
+                    if (chooseNeighborSearch == 0)
+                    {
+                        TextMesh text = UtilsClass.CreateWorldText("(" + x + "," + y + ")", null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                        text.characterSize = 0.05f;
+                    }
+                    else if (chooseNeighborSearch == 1)
+                    {
+                        TextMesh text = UtilsClass.CreateWorldText(computeUniqueCellIndex(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                        text.characterSize = 0.05f;
+                    }
+                    else if (chooseNeighborSearch == 2)
+                    {
+                        TextMesh text = UtilsClass.CreateWorldText(computeZIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                        text.characterSize = 0.05f;
+                    }
+                    else if (chooseNeighborSearch == 3)
+                    {
+                        TextMesh text = UtilsClass.CreateWorldText(computeHashIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                        text.characterSize = 0.05f;
+                    }
+                    else if (chooseNeighborSearch == 4)
+                    {
+                        TextMesh text = UtilsClass.CreateWorldText(computeHashIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                        text.characterSize = 0.05f;
+                    }
+                    else if (chooseNeighborSearch == 5)
+                    {
+                        TextMesh text = UtilsClass.CreateWorldText(computeUniqueCellIndex(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+                        text.characterSize = 0.05f;
+                    }
                 }
                 Debug.DrawLine(texOne, texTwo, Color.black, 1000f);
                 Debug.DrawLine(texOne, texThree, Color.black, 1000f);
@@ -247,6 +299,7 @@ public class GridScript : MonoBehaviour
         {
             for (int j = 0; j < numHashTableEntries; j++)
             {
+                if (hashTable[i][j] == -1) break;
                 hashTable[i][j] = -1;
             }
         }
@@ -266,11 +319,15 @@ public class GridScript : MonoBehaviour
     // }
 
     // Clear the cell counter array
-    public void clearCellCounter()
+    public void clearCellCounter(int clearNumber)
     {
+        // Parallel.For(0, cellCounter.Length, i =>
+        // {
+        //     cellCounter[i] = clearNumber;
+        // });
         for (int i = 0; i < cellCounter.Length; i++)
         {
-            cellCounter[i] = 0;
+            cellCounter[i] = clearNumber;
         }
     }
 
@@ -281,5 +338,17 @@ public class GridScript : MonoBehaviour
             return true;
         }
         return false;
+    }
+
+    public bool isValidCellIndex(long cellIndex)
+    {
+        if (cellIndex >= 0 && cellIndex < cellCounter.Length - 2)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

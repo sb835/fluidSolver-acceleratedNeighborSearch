@@ -16,6 +16,7 @@ public class ParticleScript : MonoBehaviour
     public float alpha;
     public float addAlpha;
     public Vector2 gridCell;
+    public long cellIndex;
     public int hashIndex;
     public Vector2 particlePosition;
     public int[] particleNeighbors;
@@ -56,9 +57,11 @@ public class ParticleScript : MonoBehaviour
         {
             particleIndex = simulation.currentParticle;
         }
-        particleNum = simulation.particleArray[particleIndex];
+        particleNum = simulation.particleArray[particleIndex].particleIndex;
 
         gridCell = simulation.currentGridCell;
+
+        cellIndex = simulation.particleArray[particleIndex].cellIndex;
 
         for (int n = 0; n < simulation.numParticleNeighbors; n++)
         {
@@ -67,7 +70,7 @@ public class ParticleScript : MonoBehaviour
 
         if (simulation.moveParticles && simulation.positions.Length > 0)
         {
-            if (simulation.particleArray[particleIndex] < simulation.numParticles)
+            if (simulation.isFluid[particleIndex])
             {
                 simulation.colorNeighbors(particleIndex, Color.blue);
                 simulation.colorBoundaryNeighbors(particleIndex, Color.black);
@@ -85,7 +88,7 @@ public class ParticleScript : MonoBehaviour
             // Reset particle color
             if (previousParticle != particleIndex)
             {
-                if (simulation.particleArray[previousParticle] < simulation.numParticles)
+                if (simulation.isFluid[particleIndex])
                 {
                     simulation.colorNeighbors(previousParticle, Color.blue);
                     simulation.colorBoundaryNeighbors(previousParticle, Color.black);
@@ -98,7 +101,7 @@ public class ParticleScript : MonoBehaviour
 
             float kS = 0.0f;
             Vector2 gS = new Vector2(0, 0);
-            if (simulation.particleArray[particleIndex] < simulation.numParticles)
+            if (simulation.particleArray[particleIndex].particleIndex < simulation.numParticles)
             {
                 for (int n = 0; n < simulation.numParticleNeighbors; n++)
                 {
@@ -118,7 +121,7 @@ public class ParticleScript : MonoBehaviour
             pressure = simulation.pressures[particleIndex];
 
             // Color particles
-            if (simulation.particleArray[particleIndex] < simulation.numParticles)
+            if (simulation.isFluid[particleIndex])
             {
                 simulation.colorNeighbors(particleIndex, Color.yellow);
                 simulation.colorBoundaryNeighbors(particleIndex, Color.cyan);

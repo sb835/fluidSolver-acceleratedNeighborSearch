@@ -73,7 +73,7 @@ void DrawCircle(float2 centre, float radius, float4 color)
   }  
 }
 
-[numthreads(256,1,1)] // 64
+[numthreads(256,1,1)] // 64 256
 void Circles (uint3 id : SV_DispatchThreadID)
 {
     int2 centre = (int2)(circlesBuffer[id.x].origin);

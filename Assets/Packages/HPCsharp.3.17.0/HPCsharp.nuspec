@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>HPCsharp</id>
+    <version>3.17.0</version>
+    <authors>Victor J. Duvanenko</authors>
+    <owners>FooState</owners>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/DragonSpit/HPCsharp/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/DragonSpit/HPCsharp</projectUrl>
+    <iconUrl>https://foostate.com/images/default_lib_icon_64.png</iconUrl>
+    <description>Parallel high performance cross-platform C#/.NET algorithms. 28+ algorithms with familiar interfaces and examples. Multi-core and data parallel (SIMD/SSE). Open source and free. See project Readme, blog and videos...</description>
+    <releaseNotes>Added support for .NET 8. Cleaned-up warnings which came up for .NET 8 support.</releaseNotes>
+    <copyright>Copyright �2018 Foostate</copyright>
+    <tags>high performance algorithms, C#, performance, computing, HPC, algorithm, Linq, parallel, parallel sort, sorting, radix merge stable in-place merge, priotity queue, sum, fast Kahan summation, Neumaier SIMD, SSE, multi-core, array add, copy, standard deviation, quicksort, introspective sort</tags>
+  </metadata>
+</package>
