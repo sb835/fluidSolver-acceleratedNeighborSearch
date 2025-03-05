@@ -307,31 +307,15 @@ public class CompactHashingScript : MonoBehaviour
                         spatialGrid.compactList[oldCell] = lastCell;
                         spatialGrid.compactListHashs[oldCell] = lastHash;
                         hashCollisions[oldCell] = lastHashCollision;
-                        // Find right hash
-                        // int lastHash = spatialGrid.computeHashIndex(simulation.positions[spatialGrid.compactList[lastIndex][0]]);
-                        spatialGrid.compactHashTable[lastHash] = oldCell; // ????
+                        spatialGrid.compactHashTable[lastHash] = oldCell;
                     }
-                    spatialGrid.compactHashTable[hash] = -1;  // Doesnt account for hash collisions
+                    spatialGrid.compactHashTable[hash] = -1;
                     // Delete last cell
                     spatialGrid.compactList.RemoveAt(lastIndex);
                     spatialGrid.compactListHashs.RemoveAt(lastIndex);
                     hashCollisions.RemoveAt(lastIndex);
                     usedCells--;
                 }
-                // // Remove element
-                // spatialGrid.compactList.RemoveAt(oldCell);
-                // // Add compacthashtable up
-                // int hash = spatialGrid.compactListHashs[oldCell];
-                // spatialGrid.compactListHashs.RemoveAt(oldCell);
-                // spatialGrid.compactHashTable[hash] = -1;
-                // for (int i = 0; i < spatialGrid.compactHashTable.Length; i++)
-                // {
-                //     if (spatialGrid.compactHashTable[i] > oldCell)
-                //     {
-                //         spatialGrid.compactHashTable[i]--;
-                //     }
-                // }
-                // usedCells--;
             }
             // Add particle to new cell
             // Compute hashIndex
