@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using UnityEngine.Profiling;
 public class SimulationScript : MonoBehaviour
 {
     public bool moveParticles = false;
@@ -95,8 +96,6 @@ public class SimulationScript : MonoBehaviour
     private double moveParticlesTime;
 
     // Used for compact hashing
-    private int[] spatialCellsCompactArray;
-    private int[] movingParticles;
     public Comparer<(long cellIndex, int particleIndex)> comparer;
     public int[] markers;
     public long[] scans;
@@ -145,59 +144,88 @@ public class SimulationScript : MonoBehaviour
             numBoundaries = 0;
             amountParticles = new Vector2(5, 5);
             particlePosition = new Vector2(0.5f, 1.1f);
+            numParticles = (int)amountParticles.x * (int)amountParticles.y;
+
         }
         else if (tests == 1)
         {
             numBoundaries = 0;
+            numParticles = (int)amountParticles.x * (int)amountParticles.y;
         }
         else if (tests == 2)
         {
             numBoundaries = 166 * 8;
+            numParticles = (int)amountParticles.x * (int)amountParticles.y;
         }
         else if (tests == 3)
         {
-            numBoundaries = 4 * 332 + 4 * 623;
+            numBoundaries = 6 * 332 + 6 * 623 + 3 * 200;
             amountParticles = new Vector2(190, 190);
+            numParticles = (int)amountParticles.x * (int)amountParticles.y;
         }
         else if (tests == 4)
         {
-            numBoundaries = 8 * 800;
+            numBoundaries = 4 * 800 + 4 * 800;
             amountParticles = new Vector2(400, 400);
+            // particlePosition = new Vector2(5 * particleSize, 5 * particleSize);
+            numParticles = (int)amountParticles.x * (int)amountParticles.y;
         }
         else if (tests == 5)
         {
             numBoundaries = 4 * 1700 + 4 * 2000;
             amountParticles = new Vector2(1000, 1000);
+            numParticles = (int)amountParticles.x * (int)amountParticles.y;
         }
 
         else if (tests == 6)
         {
             numBoundaries = 8 * 4000;
             amountParticles = new Vector2(2000, 2000);
+            numParticles = (int)amountParticles.x * (int)amountParticles.y;
         }
 
         else if (tests == 7)
         {
             numBoundaries = 8 * 6000;
             amountParticles = new Vector2(3000, 3000);
+            numParticles = (int)amountParticles.x * (int)amountParticles.y;
         }
         else if (tests == 8)
         {
             numBoundaries = 0;
             amountParticles = new Vector2(4000, 4000);
+            numParticles = (int)amountParticles.x * (int)amountParticles.y;
         }
         else if (tests == 9)
         {
             numBoundaries = 0;
             amountParticles = new Vector2(5000, 5000);
+            numParticles = (int)amountParticles.x * (int)amountParticles.y;
         }
         else if (tests == 10)
         {
             numBoundaries = 0;
-            amountParticles = new Vector2(5100, 5100);
+            amountParticles = new Vector2(5200, 5160);
+            numParticles = (int)amountParticles.x * (int)amountParticles.y;
+        }
+        else if (tests == 11)
+        {
+            numBoundaries = 40 * 4000 + 20 * 2000 + 20 * 2000 + 20 * 1000;
+            numParticles = 1035000;
+        }
+        else if (tests == 12)
+        {
+            numBoundaries = 10 * 1700 + 10 * 3000;
+            amountParticles = new Vector2(1400, 1000);
+            numParticles = (int)amountParticles.x * (int)amountParticles.y;
         }
 
-        numParticles = (int)amountParticles.x * (int)amountParticles.y;
+        else if (tests == 13)
+        {
+            numBoundaries = 0;
+            amountParticles = new Vector2(6000, 5700);
+            numParticles = (int)amountParticles.x * (int)amountParticles.y;
+        }
 
         particleArray = new (long, int)[numParticles + numBoundaries];
         isFluid = new bool[numParticles + numBoundaries];
@@ -217,7 +245,14 @@ public class SimulationScript : MonoBehaviour
             neighborsParticles[i] = -1;
         }
 
-        helper.initializeParticles(resetParticles, (int)amountParticles.x, (int)amountParticles.y, particlePosition, particleStartSpacing);
+        if (tests == 11)
+        {
+            helper.initializeParticles(true, 2300, 450, new Vector2(10f, 315f), particleStartSpacing);
+        }
+        else
+        {
+            helper.initializeParticles(resetParticles, (int)amountParticles.x, (int)amountParticles.y, particlePosition, particleStartSpacing);
+        }
 
         // Reorder Particles
         if (spatialGrid.randomInitializedParticles)
@@ -227,9 +262,9 @@ public class SimulationScript : MonoBehaviour
 
         // Initialize Grid
 
-        spatialGrid.emptyGrid();
-        spatialGrid.clearCellCounter(0);
-        spatialGrid.clearHashTable();
+        // spatialGrid.emptyGrid();
+        // spatialGrid.clearCellCounter(0);
+        // spatialGrid.clearHashTable();
 
         //Draw grid
         spatialGrid.DrawGrid();
@@ -257,7 +292,7 @@ public class SimulationScript : MonoBehaviour
 
         else if (tests == 2)
         {
-            helper.initializeBorder(166, 166, 166, 166, true);
+            helper.initializeBorder(166, 166, 166, 166, 2);
             mainCamera.orthographicSize = 10;
             mainCamera.transform.position = new Vector3(12, 10, -10);
 
@@ -267,7 +302,8 @@ public class SimulationScript : MonoBehaviour
 
         else if (tests == 3)
         {
-            helper.initializeBorder(332, 332, 623, 623, true);
+            helper.initializeBorder(332, 332, 623, 623, 3);
+            helper.setLine(new Vector2(50, 20), 200, -0.06f, 3);
             mainCamera.orthographicSize = 23;
             mainCamera.transform.position = new Vector3(41f, 23, -10);
 
@@ -277,7 +313,7 @@ public class SimulationScript : MonoBehaviour
 
         else if (tests == 4)
         {
-            helper.initializeBorder(800, 800, 800, 800, true);
+            helper.initializeBorder(800, 800, 800, 800, 2);
             mainCamera.orthographicSize = 40;
             mainCamera.transform.position = new Vector3(50, 40, -10);
 
@@ -287,7 +323,7 @@ public class SimulationScript : MonoBehaviour
 
         else if (tests == 5)
         {
-            helper.initializeBorder(1700, 1700, 2000, 2000, true);
+            helper.initializeBorder(1700, 1700, 2000, 2000, 2);
             mainCamera.orthographicSize = 120;
             mainCamera.transform.position = new Vector3(155, 120, -10);
 
@@ -297,7 +333,7 @@ public class SimulationScript : MonoBehaviour
 
         else if (tests == 6)
         {
-            helper.initializeBorder(4000, 4000, 4000, 4000, true);
+            helper.initializeBorder(4000, 4000, 4000, 4000, 2);
             mainCamera.orthographicSize = 220;
             mainCamera.transform.position = new Vector3(280, 220, -10);
 
@@ -307,7 +343,7 @@ public class SimulationScript : MonoBehaviour
 
         else if (tests == 7)
         {
-            helper.initializeBorder(6000, 6000, 6000, 6000, true);
+            helper.initializeBorder(6000, 6000, 6000, 6000, 2);
             mainCamera.orthographicSize = 220;
             mainCamera.transform.position = new Vector3(280, 220, -10);
 
@@ -340,6 +376,39 @@ public class SimulationScript : MonoBehaviour
             drawCirclesScript.transform.localScale = new Vector3(1000, 1000, 0);
         }
 
+        else if (tests == 11)
+        {
+            helper.initializeBorder(4000, 4000, 4000, 4000, 10);
+            helper.setLine(new Vector2(0, 250), 2000, -0.06f, 20);
+            helper.setLine(new Vector2(250, 200), 2000, 0.04f, 20);
+            helper.setLine(new Vector2(400, 100), 1000, -0.03f, 20, -1);
+            // helper.setLine(new Vector2(400, 100), 1000, 0.3f, 10, -1);
+            mainCamera.orthographicSize = 220;
+            mainCamera.transform.position = new Vector3(280, 220, -10);
+
+            drawCirclesScript.transform.position = new Vector3(250, 250, 0);
+            drawCirclesScript.transform.localScale = new Vector3(500, 500, 0);
+        }
+
+        else if (tests == 12)
+        {
+            helper.initializeBorder(1700, 1700, 3000, 3000, 5);
+            mainCamera.orthographicSize = 120;
+            mainCamera.transform.position = new Vector3(155, 120, -10);
+
+            drawCirclesScript.transform.position = new Vector3(250, 250, 0);
+            drawCirclesScript.transform.localScale = new Vector3(500, 500, 0);
+        }
+
+        else if (tests == 13)
+        {
+            mainCamera.orthographicSize = 220;
+            mainCamera.transform.position = new Vector3(280, 220, -10);
+
+            drawCirclesScript.transform.position = new Vector3(500, 500, 0);
+            drawCirclesScript.transform.localScale = new Vector3(1000, 1000, 0);
+        }
+
         texResolution = drawCirclesScript.texResolution;
         quadWidth = drawCirclesScript.transform.localScale.x;
         quadHeight = drawCirclesScript.transform.localScale.y;
@@ -359,13 +428,6 @@ public class SimulationScript : MonoBehaviour
         sortedPressures = new float[numParticles + numBoundaries];
         sortedForces = new Vector2[numParticles + numBoundaries];
         sortedNPForces = new Vector2[numParticles + numBoundaries];
-
-        spatialCellsCompactArray = new int[numParticles + numBoundaries];
-        for (int i = 0; i < numParticles + numBoundaries; i++)
-        {
-            spatialCellsCompactArray[i] = -1;
-        }
-        movingParticles = new int[numParticles + numBoundaries];
 
         // Erzeuge einen IComparer<(long, int)>, der nur nach cellIndex sortiert:
         comparer = Comparer<(long cellIndex, int particleIndex)>.Create(
@@ -428,28 +490,28 @@ public class SimulationScript : MonoBehaviour
 
             else if (tests == 2)
             {
-                helper.initializeBorder(166, 166, 166, 166, true);
+                helper.initializeBorder(166, 166, 166, 166, 2);
                 mainCamera.orthographicSize = 10;
                 mainCamera.transform.position = new Vector3(12, 10, -10);
             }
 
             else if (tests == 3)
             {
-                helper.initializeBorder(332, 332, 623, 623, true);
+                helper.initializeBorder(332, 332, 623, 623, 2);
                 mainCamera.orthographicSize = 23;
                 mainCamera.transform.position = new Vector3(41f, 23, -10);
             }
 
             else if (tests == 4)
             {
-                helper.initializeBorder(800, 800, 800, 800, true);
+                helper.initializeBorder(800, 800, 800, 800, 2);
                 mainCamera.orthographicSize = 40;
                 mainCamera.transform.position = new Vector3(50, 40, -10);
             }
 
             else if (tests == 5)
             {
-                helper.initializeBorder(1700, 1700, 1700, 1700, true);
+                helper.initializeBorder(1700, 1700, 1700, 1700, 2);
                 mainCamera.orthographicSize = 100;
                 mainCamera.transform.position = new Vector3(100, 100, -10);
             }
@@ -504,18 +566,18 @@ public class SimulationScript : MonoBehaviour
         particleSize = particleMass;
 
         // Check for max velocity
-        maxVelocity = new Vector2(0, 0);
-        for (int particle = 0; particle < numParticles + numBoundaries; particle++)
-        {
-            int i = particleArray[particle].particleIndex;
-            if (isFluid[i])
-            {
-                if (velocitys[i].magnitude > maxVelocity.magnitude && velocitys[i].y > -15 && velocitys[i].magnitude > 0)
-                {
-                    maxVelocity = velocitys[i];
-                }
-            }
-        }
+        // maxVelocity = new Vector2(0, 0);
+        // for (int particle = 0; particle < numParticles + numBoundaries; particle++)
+        // {
+        //     int i = particleArray[particle].particleIndex;
+        //     if (isFluid[i])
+        //     {
+        //         if (velocitys[i].magnitude > maxVelocity.magnitude && velocitys[i].y > -15 && velocitys[i].magnitude > 0)
+        //         {
+        //             maxVelocity = velocitys[i];
+        //         }
+        //     }
+        // }
 
         if (moveParticles)
         {
@@ -860,6 +922,11 @@ public class SimulationScript : MonoBehaviour
             moveParticlesTime = watchmoveParticles.Elapsed.TotalMilliseconds;
             sumMoveParticlesTime += moveParticlesTime;
             measurements.averageMoveParticlesTime = sumMoveParticlesTime / tS;
+
+            // Gesamter aktuell allokierter Speicher in Bytes
+            measurements.totalAllocated = Profiler.GetTotalAllocatedMemoryLong();
+            // Vom Managed-Heap verwendeter Speicher
+            measurements.monoUsed = Profiler.GetMonoUsedSizeLong();
         }
     }
 
@@ -874,7 +941,7 @@ public class SimulationScript : MonoBehaviour
     private void DrawParticles()
     {
         drawCirclesScript.DrawCirclesAtPositions(convertPositions(positions), colors, particleSize * (texResolution / quadWidth));
-        drawCirclesScript.DispatchKernel(Mathf.Max(positions.Length / 256, 1)); //64 for 4 mill
+        drawCirclesScript.DispatchKernel(Mathf.Max(positions.Length / 24, 1)); //64 for 4 mill // 256 standart
     }
 
     // Convert positions to texCoords
@@ -933,16 +1000,17 @@ public class SimulationScript : MonoBehaviour
         for (int n = 0; n < numParticleNeighbors; n++)
         {
             int num = neighborsParticles[neighbors[i] + n];
-            if (num >= 0)
+            if (num == -1)
             {
-                if (isFluid[num])
-                {
-                    Vector2 xij = positions[i] - positions[num];
-                    Vector2 vij = velocitys[i] - velocitys[num];
-                    Vector2 formula = vij * xij / ((xij * xij) + new Vector2(0.01f * particleSpacing * particleSpacing, 0.01f * particleSpacing * particleSpacing));
-                    Vector2 gradient = smoothingKernelDerivative(positions[i], positions[num], particleSpacing);
-                    viscosity += particleMass / densitys[num] * formula * gradient;
-                }
+                break;
+            }
+            if (isFluid[num])
+            {
+                Vector2 xij = positions[i] - positions[num];
+                Vector2 vij = velocitys[i] - velocitys[num];
+                Vector2 formula = vij * xij / ((xij * xij) + new Vector2(0.01f * particleSpacing * particleSpacing, 0.01f * particleSpacing * particleSpacing));
+                Vector2 gradient = smoothingKernelDerivative(positions[i], positions[num], particleSpacing);
+                viscosity += particleMass / densitys[num] * formula * gradient;
             }
         }
         return 2 * v * viscosity;
@@ -955,10 +1023,11 @@ public class SimulationScript : MonoBehaviour
         for (int n = 0; n < numParticleNeighbors; n++)
         {
             int num = neighborsParticles[neighbors[i] + n];
-            if (num >= 0)
+            if (num == -1)
             {
-                result += particleMass * smoothingKernel(positions[i], positions[num], particleSpacing);
+                break;
             }
+            result += particleMass * smoothingKernel(positions[i], positions[num], particleSpacing);
         }
         densitys[i] = result;
     }
@@ -970,20 +1039,21 @@ public class SimulationScript : MonoBehaviour
         for (int n = 0; n < numParticleNeighbors; n++)
         {
             int num = neighborsParticles[neighbors[i] + n];
-            if (num >= 0)
+            if (num == -1)
             {
-                if (isFluid[num])
-                {
-                    Vector2 gradient = smoothingKernelDerivative(positions[i], positions[num], particleSpacing);
-                    float formula = (pressures[i] / (densitys[i] * densitys[i])) + (pressures[num] / (densitys[num] * densitys[num]));
-                    result += particleMass * formula * gradient;
-                }
-                else
-                {
-                    Vector2 gradient = smoothingKernelDerivative(positions[i], positions[num], particleSpacing);
-                    float formula = (pressures[i] / (densitys[i] * densitys[i])) + (pressures[i] / (densitys[i] * densitys[i]));
-                    result += particleMass * formula * gradient;
-                }
+                break;
+            }
+            if (isFluid[num])
+            {
+                Vector2 gradient = smoothingKernelDerivative(positions[i], positions[num], particleSpacing);
+                float formula = (pressures[i] / (densitys[i] * densitys[i])) + (pressures[num] / (densitys[num] * densitys[num]));
+                result += particleMass * formula * gradient;
+            }
+            else
+            {
+                Vector2 gradient = smoothingKernelDerivative(positions[i], positions[num], particleSpacing);
+                float formula = (pressures[i] / (densitys[i] * densitys[i])) + (pressures[i] / (densitys[i] * densitys[i]));
+                result += particleMass * formula * gradient;
             }
         }
         forces[i] = -result;
@@ -1021,12 +1091,13 @@ public class SimulationScript : MonoBehaviour
             for (int n = 0; n < numParticleNeighbors; n++)
             {
                 int num = neighborsParticles[neighbors[i] + n];
-                if (num >= 0)
+                if (num == -1)
                 {
-                    if (isFluid[num])
-                    {
-                        colors[num] = color;
-                    }
+                    break;
+                }
+                if (isFluid[num])
+                {
+                    colors[num] = color;
                 }
             }
         }
@@ -1039,13 +1110,14 @@ public class SimulationScript : MonoBehaviour
             for (int n = 0; n < numParticleNeighbors; n++)
             {
                 int num = neighborsParticles[neighbors[i] + n];
-                if (num >= 0)
+                if (num == -1)
                 {
-                    if (!isFluid[num])
-                    {
+                    break;
+                }
+                if (!isFluid[num])
+                {
 
-                        colors[num] = color;
-                    }
+                    colors[num] = color;
                 }
             }
         }

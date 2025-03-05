@@ -63,7 +63,8 @@ public class BasicGridScript : MonoBehaviour
                 {
                     findNeighbors(i);
                 }
-            };
+            }
+            ;
         }
     }
 

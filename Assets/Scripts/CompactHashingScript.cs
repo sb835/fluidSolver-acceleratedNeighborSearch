@@ -11,21 +11,25 @@ public class CompactHashingScript : MonoBehaviour
 {
     private GridScript spatialGrid;
     private SimulationScript simulation;
-    public int usedCells;
-    public int compactListLength;
-    public int[] countCompactList;
-    public List<int> compactListHashs;
-    public int[] movingParticles;
+    public bool startCounting;
+    public int count;
+    private int usedCells;
+    private int compactListLength;
+    private int[] countCompactList;
+    private List<int> compactListHashs;
+    private int[] movingParticles;
     public int numMovingParticles;
-    public int[] compactHashTable;
-    public int numCompactHashTable;
-    public int containsDublicates;
-    public int[] countHashTable;
-    public List<int> oldHashes;
-    public Vector2[] cellCoordinates;
-    public List<bool> hashCollisions;
-    public int counter;
-    public int numHashCollsions;
+    private int sumMovingParticles;
+    public int avgMovingParticles;
+    private int[] compactHashTable;
+    private int numCompactHashTable;
+    private int containsDublicates;
+    private int[] countHashTable;
+    private List<int> oldHashes;
+    private Vector2[] cellCoordinates;
+    private List<bool> hashCollisions;
+    private int counter;
+    private int numHashCollsions;
     // Start is called before the first frame update
     void Start()
     {
@@ -84,23 +88,6 @@ public class CompactHashingScript : MonoBehaviour
         // compactListHashs = spatialGrid.compactListHashs;
     }
 
-    int ContainsDuplicates(int[] array)
-    {
-        var set = new HashSet<int>();
-        foreach (var item in array)
-        {
-            if (item != -1)
-            {
-                // Add() gibt false zurück, wenn das Element schon enthalten ist.
-                if (!set.Add(item))
-                {
-                    return item; // Duplikat gefunden
-                }
-            }
-        }
-        return -1; // Keine Duplikate gefunden
-    }
-
     public void construction()
     {
         if (counter == 0)
@@ -129,7 +116,7 @@ public class CompactHashingScript : MonoBehaviour
         // Compute cellIndex for every particle
         Parallel.For(0, simulation.numParticles + simulation.numBoundaries, i =>
         {
-            simulation.particleArray[i].cellIndex = spatialGrid.computeCellIndex(simulation.positions[simulation.particleArray[i].particleIndex]);
+            simulation.particleArray[i].cellIndex = spatialGrid.computeZIndexForPosition(simulation.positions[simulation.particleArray[i].particleIndex]);
         });
 
         // Sort attributes after cell indices
@@ -238,6 +225,26 @@ public class CompactHashingScript : MonoBehaviour
                 movingParticles[particle] = i;
             }
         });
+
+        // if (startCounting)
+        // {
+        //     count++;
+        //     numMovingParticles = 0;
+        //     for (int i = 0; i < movingParticles.Length; i++)
+        //     {
+        //         if (movingParticles[i] != -1)
+        //         {
+        //             numMovingParticles++;
+        //         }
+        //     }
+        //     sumMovingParticles += numMovingParticles;
+        //     avgMovingParticles = sumMovingParticles / count;
+        // }
+        // else
+        // {
+        //     sumMovingParticles = 0;
+        //     count = 0;
+        // }
 
         foreach (int particle in movingParticles)
         {
@@ -427,6 +434,10 @@ public class CompactHashingScript : MonoBehaviour
                     // Clear all neighbors
                     for (int n = 0; n < simulation.numParticleNeighbors; n++)
                     {
+                        if (simulation.neighborsParticles[simulation.neighbors[i] + n] == -1)
+                        {
+                            break;
+                        }
                         simulation.neighborsParticles[simulation.neighbors[i] + n] = -1;
                     }
                     // Initialize counter
@@ -497,6 +508,10 @@ public class CompactHashingScript : MonoBehaviour
                     // Clear all neighbors
                     for (int n = 0; n < simulation.numParticleNeighbors; n++)
                     {
+                        if (simulation.neighborsParticles[simulation.neighbors[i] + n] == -1)
+                        {
+                            break;
+                        }
                         simulation.neighborsParticles[simulation.neighbors[i] + n] = -1;
                     }
                     // Initialize counter

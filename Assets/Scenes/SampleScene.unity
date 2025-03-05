@@ -549,9 +549,9 @@ MonoBehaviour:
   countCFLConditions: 0
   resetParticles: 1
   borderOffset: 15
-  tests: 3
+  tests: 12
   tS: 0
-  maxTS: 2
+  maxTS: 4000
   constructionCounter: 0
   amountParticles: {x: 35, y: 35}
   particlePosition: {x: 1.1, y: 1.1}
@@ -576,7 +576,7 @@ MonoBehaviour:
   v: 0.05
   numParticles: 0
   numBoundaries: 0
-  numParticleNeighbors: 40
+  numParticleNeighbors: 80
   particleSize: 0
   particleMass: 0
   particleSpacing: 0
@@ -647,28 +647,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44ddcdd5cee7f6a43920ea3155a68ea6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particleNum: 0
-  particleIndex: 0
-  findParticle: 0
-  searchParticle: 0
-  colorDensitys: 0
-  alpha: 0
-  addAlpha: 0
-  gridCell: {x: 0, y: 0}
-  cellIndex: 0
-  hashIndex: 0
-  particlePosition: {x: 0, y: 0}
-  particleNeighbors: 
-  particleVelocity: {x: 0, y: 0}
-  neighbor: 0
-  kernel: 0
-  kernelGradient: {x: 0, y: 0}
-  kernelSum: 0
-  kernelDerivativeSum: {x: 0, y: 0}
-  density: 0
-  pressure: 0
-  numPerfectDensitys: 0
-  numPerfectPressure: 0
 --- !u!1 &717914877
 GameObject:
   m_ObjectHideFlags: 0
@@ -759,6 +737,8 @@ MonoBehaviour:
   averageNPForcesTime: 0
   averagePressureForcesTime: 0
   averageMoveParticlesTime: 0
+  totalAllocated: 0
+  monoUsed: 0
 --- !u!4 &1325355055
 Transform:
   m_ObjectHideFlags: 0
@@ -818,21 +798,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03f0dac8382707c48b43fd2a42fa535f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  usedCells: 0
-  compactListLength: 0
-  countCompactList: 
-  compactListHashs: 
-  movingParticles: 
+  startCounting: 0
+  count: 0
   numMovingParticles: 0
-  compactHashTable: 
-  numCompactHashTable: 0
-  containsDublicates: 0
-  countHashTable: 
-  oldHashes: 
-  cellCoordinates: []
-  hashCollisions: 
-  counter: 0
-  numHashCollsions: 0
+  avgMovingParticles: 0
 --- !u!1 &1984741414
 GameObject:
   m_ObjectHideFlags: 0

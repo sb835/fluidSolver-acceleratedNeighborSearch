@@ -19,6 +19,8 @@ public class MeasurementsScript : MonoBehaviour
     public double averageNPForcesTime;
     public double averagePressureForcesTime;
     public double averageMoveParticlesTime;
+    public long totalAllocated;
+    public long monoUsed;
     // Start is called before the first frame update
     void Start()
     {

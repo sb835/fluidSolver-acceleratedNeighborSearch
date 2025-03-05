@@ -25,11 +25,11 @@ public class CellLinkedListScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        cellLinkedListParticle = spatialGrid.cellLinkedListParticles;
-        cellLinkedListCellIndex = spatialGrid.cellLinkedListCellIndices;
-        markers = simulation.markers;
-        scans = simulation.scans;
-        timeStep = simulation.tS;
+        // cellLinkedListParticle = spatialGrid.cellLinkedListParticles;
+        // cellLinkedListCellIndex = spatialGrid.cellLinkedListCellIndices;
+        // markers = simulation.markers;
+        // scans = simulation.scans;
+        // timeStep = simulation.tS;
     }
 
     public void construction()
@@ -199,6 +199,20 @@ public class CellLinkedListScript : MonoBehaviour
         spatialGrid.neighboringCellIndices[c][7] = cDown + 1;
         spatialGrid.neighboringCellIndices[c][8] = cDown - 1;
 
+        // Vector2 currentCell = spatialGrid.computeCellPosition(simulation.positions[simulation.particleArray[spatialGrid.cellLinkedListParticles[c]].particleIndex]);
+        // int CellX = (int)currentCell.x;
+        // int CellY = (int)currentCell.y;
+        // // Compute all neighboring cells
+        // spatialGrid.neighboringCellIndices[c][0] = Array.BinarySearch(spatialGrid.cellLinkedListCellIndices, spatialGrid.computeZIndexForCell(CellX, CellY));
+        // spatialGrid.neighboringCellIndices[c][1] = Array.BinarySearch(spatialGrid.cellLinkedListCellIndices, spatialGrid.computeZIndexForCell(CellX + 1, CellY));
+        // spatialGrid.neighboringCellIndices[c][2] = Array.BinarySearch(spatialGrid.cellLinkedListCellIndices, spatialGrid.computeZIndexForCell(CellX + 1, CellY + 1));
+        // spatialGrid.neighboringCellIndices[c][3] = Array.BinarySearch(spatialGrid.cellLinkedListCellIndices, spatialGrid.computeZIndexForCell(CellX + 1, CellY - 1));
+        // spatialGrid.neighboringCellIndices[c][4] = Array.BinarySearch(spatialGrid.cellLinkedListCellIndices, spatialGrid.computeZIndexForCell(CellX - 1, CellY));
+        // spatialGrid.neighboringCellIndices[c][5] = Array.BinarySearch(spatialGrid.cellLinkedListCellIndices, spatialGrid.computeZIndexForCell(CellX - 1, CellY + 1));
+        // spatialGrid.neighboringCellIndices[c][6] = Array.BinarySearch(spatialGrid.cellLinkedListCellIndices, spatialGrid.computeZIndexForCell(CellX - 1, CellY - 1));
+        // spatialGrid.neighboringCellIndices[c][7] = Array.BinarySearch(spatialGrid.cellLinkedListCellIndices, spatialGrid.computeZIndexForCell(CellX, CellY + 1));
+        // spatialGrid.neighboringCellIndices[c][8] = Array.BinarySearch(spatialGrid.cellLinkedListCellIndices, spatialGrid.computeUniqueCellIndex(CellX, CellY - 1));
+
         // Iterate over all particles in cell i
         int cellStart = spatialGrid.cellLinkedListParticles[c];
         int cellEnd = spatialGrid.cellLinkedListParticles[c + 1];
@@ -211,6 +225,10 @@ public class CellLinkedListScript : MonoBehaviour
                 // Clear all neighbors
                 for (int n = 0; n < simulation.numParticleNeighbors; n++)
                 {
+                    if (simulation.neighborsParticles[simulation.neighbors[i] + n] == -1)
+                    {
+                        break;
+                    }
                     simulation.neighborsParticles[simulation.neighbors[i] + n] = -1;
                 }
                 // Initialize counter
@@ -235,57 +253,5 @@ public class CellLinkedListScript : MonoBehaviour
                 }
             }
         }
-    }
-
-    public static long[] ComputePrefixSum(int[] input)
-    {
-        int n = input.Length;
-        if (n == 0)
-            return new long[0];
-
-        // Determine the number of threads (or blocks) to use.
-        int numThreads = Environment.ProcessorCount;
-        int blockSize = (n + numThreads - 1) / numThreads;
-
-        // Create output and block sum arrays as long arrays.
-        long[] output = new long[n];
-        long[] blockSums = new long[numThreads];
-
-        // Phase 1: Compute local prefix sums for each block in parallel.
-        Parallel.For(0, numThreads, block =>
-        {
-            int start = block * blockSize;
-            int end = Math.Min(start + blockSize, n);
-            long sum = 0;
-            for (int i = start; i < end; i++)
-            {
-                sum += input[i];
-                output[i] = sum;
-            }
-            blockSums[block] = sum;
-        });
-
-        // Phase 2: Compute offsets for each block sequentially.
-        long[] offsets = new long[numThreads];
-        long runningTotal = 0;
-        for (int block = 0; block < numThreads; block++)
-        {
-            offsets[block] = runningTotal;
-            runningTotal += blockSums[block];
-        }
-
-        // Phase 3: Add the corresponding offset to each block in parallel.
-        Parallel.For(0, numThreads, block =>
-        {
-            int start = block * blockSize;
-            int end = Math.Min(start + blockSize, n);
-            long offset = offsets[block];
-            for (int i = start; i < end; i++)
-            {
-                output[i] += offset;
-            }
-        });
-
-        return output;
     }
 }

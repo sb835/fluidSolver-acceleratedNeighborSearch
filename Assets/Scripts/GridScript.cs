@@ -110,6 +110,28 @@ public class GridScript : MonoBehaviour
             drawGridEnabled = false;
             width = 2800;
             height = 2800;
+            numParticles = 26832000;
+        }
+        else if (simulation.tests == 11)
+        {
+            drawGridEnabled = false;
+            width = 1300;
+            height = 1300;
+            numParticles = 1035000;
+        }
+        else if (simulation.tests == 12)
+        {
+            drawGridEnabled = false;
+            width = 1000;
+            height = 1000;
+            numParticles = 1400000;
+        }
+        else if (simulation.tests == 13)
+        {
+            drawGridEnabled = false;
+            width = 2800;
+            height = 2800;
+            numParticles = 34200000;
         }
         grid = new List<int>[width, height];
         if (chooseNeighborSearch == 1)
@@ -120,28 +142,36 @@ public class GridScript : MonoBehaviour
         {
             cellCounter = new int[(width * height * 2) + 1];
         }
-        hashTable = new int[numParticles * 4][];
-        hashTableLength = hashTable.Length;
-        for (int i = 0; i < hashTableLength; i++)
+        if (chooseNeighborSearch == 3)
         {
-            hashTable[i] = new int[numHashTableEntries];
-            for (int j = 0; j < numHashTableEntries; j++)
+            hashTable = new int[numParticles * 4][];
+            hashTableLength = hashTable.Length;
+            for (int i = 0; i < hashTableLength; i++)
             {
-                hashTable[i][j] = -1;
+                hashTable[i] = new int[numHashTableEntries];
+                for (int j = 0; j < numHashTableEntries; j++)
+                {
+                    hashTable[i][j] = -1;
+                }
             }
+            countHashTable = new int[hashTableLength];
+            displayCountHashTable = new int[hashTableLength];
         }
-        countHashTable = new int[hashTableLength];
-        displayCountHashTable = new int[hashTableLength];
 
-        // compact hashing
-        compactHashTable = new int[hashTableLength];
-        for (int i = 0; i < compactHashTable.Length; i++)
+        if (chooseNeighborSearch == 4)
         {
-            compactHashTable[i] = -1;
+            // compact hashing
+            compactHashTable = new int[numParticles * 4];
+            hashTableLength = compactHashTable.Length;
+            for (int i = 0; i < compactHashTable.Length; i++)
+            {
+                compactHashTable[i] = -1;
+            }
+            countHashTable = new int[hashTableLength];
         }
 
-        neighboringCellIndices = new long[hashTableLength][];
-        for (int i = 0; i < hashTableLength; i++)
+        neighboringCellIndices = new long[numParticles * 4][];
+        for (int i = 0; i < numParticles * 4; i++)
         {
             neighboringCellIndices[i] = new long[9];
         }
@@ -150,8 +180,8 @@ public class GridScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        sortedParticleArray = simulation.particleArray;
-        gridContent = grid[(int)gridPos.x, (int)gridPos.y];
+        // sortedParticleArray = simulation.particleArray;
+        // gridContent = grid[(int)gridPos.x, (int)gridPos.y];
     }
 
     // Interleave to 64 bit
@@ -227,6 +257,88 @@ public class GridScript : MonoBehaviour
         return Math.Abs(hash);
     }
 
+    // public void DrawGrid()
+    // {
+    //     for (int x = 0; x < width; x++)
+    //     {
+    //         for (int y = 0; y < height; y++)
+    //         {
+    //             // Change to texCoordinates
+    //             Vector2 texOne = computeWorldCoords(x, y);
+    //             Vector2 texTwo = computeWorldCoords(x, y + 1);
+    //             Vector2 texThree = computeWorldCoords(x + 1, y);
+    //             if (drawGridEnabled)
+    //             {
+    //                 // TextMesh text = UtilsClass.CreateWorldText(computeUniqueCellIndex(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+    //                 // text.characterSize = 0.05f;
+    //                 if (chooseNeighborSearch == 0)
+    //                 {
+    //                     TextMesh text = UtilsClass.CreateWorldText("(" + x + "," + y + ")", null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+    //                     text.characterSize = 0.05f;
+    //                 }
+    //                 else if (chooseNeighborSearch == 1)
+    //                 {
+    //                     TextMesh text = UtilsClass.CreateWorldText(computeUniqueCellIndex(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+    //                     text.characterSize = 0.05f;
+    //                 }
+    //                 else if (chooseNeighborSearch == 2)
+    //                 {
+    //                     TextMesh text = UtilsClass.CreateWorldText(computeZIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+    //                     text.characterSize = 0.05f;
+    //                 }
+    //                 else if (chooseNeighborSearch == 3)
+    //                 {
+    //                     TextMesh text = UtilsClass.CreateWorldText(computeHashIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+    //                     text.characterSize = 0.05f;
+    //                 }
+    //                 else if (chooseNeighborSearch == 4)
+    //                 {
+    //                     TextMesh text = UtilsClass.CreateWorldText(computeHashIndexForCell(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+    //                     text.characterSize = 0.05f;
+    //                 }
+    //                 else if (chooseNeighborSearch == 5)
+    //                 {
+    //                     TextMesh text = UtilsClass.CreateWorldText(computeUniqueCellIndex(x, y).ToString(), null, computeWorldCoords(x, y) + new Vector2(cellSize, cellSize) * 0.5f, 20, Color.white, TextAnchor.MiddleCenter);
+    //                     text.characterSize = 0.05f;
+    //                 }
+    //             }
+    //             Debug.DrawLine(texOne, texTwo, Color.black, 1000f);
+    //             Debug.DrawLine(texOne, texThree, Color.black, 1000f);
+    //         }
+    //     }
+    //     Debug.DrawLine(computeWorldCoords(0, height), computeWorldCoords(width, height), Color.black, 1000f);
+    //     Debug.DrawLine(computeWorldCoords(width, 0), computeWorldCoords(width, height), Color.black, 1000f);
+    // }
+
+    // Fill the grid with empty lists
+    public void emptyGrid()
+    {
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                grid[i, j] = new List<int>();
+            }
+        }
+    }
+
+    // Clear the hash table
+    public void clearHashTable()
+    {
+        for (int i = 0; i < hashTableLength; i++)
+        {
+            for (int j = 0; j < numHashTableEntries; j++)
+            {
+                if (hashTable[i][j] == -1) break;
+                hashTable[i][j] = -1;
+            }
+        }
+        for (int i = 0; i < hashTableLength; i++)
+        {
+            countHashTable[i] = 0;
+        }
+    }
+
     public void DrawGrid()
     {
         for (int x = 0; x < width; x++)
@@ -280,51 +392,9 @@ public class GridScript : MonoBehaviour
         Debug.DrawLine(computeWorldCoords(width, 0), computeWorldCoords(width, height), Color.black, 1000f);
     }
 
-    // Fill the grid with empty lists
-    public void emptyGrid()
-    {
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-                grid[i, j] = new List<int>();
-            }
-        }
-    }
-
-    // Clear the hash table
-    public void clearHashTable()
-    {
-        for (int i = 0; i < hashTableLength; i++)
-        {
-            for (int j = 0; j < numHashTableEntries; j++)
-            {
-                if (hashTable[i][j] == -1) break;
-                hashTable[i][j] = -1;
-            }
-        }
-        for (int i = 0; i < hashTableLength; i++)
-        {
-            countHashTable[i] = 0;
-        }
-    }
-
-    // Count hash table entries
-    // public void countHashTableEntries()
-    // {
-    //     for (int i = 0; i < hashTableLength; i++)
-    //     {
-    //         displayHashTable[i] = hashTable[i].Count;
-    //     }
-    // }
-
     // Clear the cell counter array
     public void clearCellCounter(int clearNumber)
     {
-        // Parallel.For(0, cellCounter.Length, i =>
-        // {
-        //     cellCounter[i] = clearNumber;
-        // });
         for (int i = 0; i < cellCounter.Length; i++)
         {
             cellCounter[i] = clearNumber;

@@ -106,24 +106,14 @@ public class HelperScript : MonoBehaviour
         }
     }
 
-    public void initializeBorder(int leftLength, int rightLength, int topLength, int bottomLength, bool doubleBorder)
+    public void initializeBorder(int leftLength, int rightLength, int topLength, int bottomLength, int layers)
     {
         // Box
         // Down
-        float x = 0.0f + simulation.particleSize;
-        float y = 0.0f + simulation.particleSize;
-        for (int i = 0; i < bottomLength; i++)
+        for (int l = 0; l < layers; l++)
         {
-            InitBoundaryParticle(new Vector2(x, y));
-
-            x += 2 * simulation.particleSize;
-        }
-
-        // Double
-        if (doubleBorder)
-        {
-            x = 0.0f + simulation.particleSize;
-            y = 0.0f + 3 * simulation.particleSize;
+            float x = 0.0f + simulation.particleSize;
+            float y = 0.0f + simulation.particleSize + (2 * l) * simulation.particleSize;
             for (int i = 0; i < bottomLength; i++)
             {
                 InitBoundaryParticle(new Vector2(x, y));
@@ -133,20 +123,10 @@ public class HelperScript : MonoBehaviour
         }
 
         // Top
-        x = 0.0f - simulation.particleSize;
-        y = (leftLength * 2 * simulation.particleSize) + simulation.particleSize;
-        for (int i = 0; i < topLength; i++)
+        for (int l = 0; l < layers; l++)
         {
-            InitBoundaryParticle(new Vector2(x, y));
-
-            x += 2 * simulation.particleSize;
-        }
-
-        // Double
-        if (doubleBorder)
-        {
-            x = 0.0f - simulation.particleSize;
-            y = (leftLength * 2 * simulation.particleSize) + 3 * simulation.particleSize;
+            float x = 0.0f - simulation.particleSize;
+            float y = (leftLength * 2 * simulation.particleSize) + simulation.particleSize + (2 * l) * simulation.particleSize;
             for (int i = 0; i < topLength; i++)
             {
                 InitBoundaryParticle(new Vector2(x, y));
@@ -156,20 +136,10 @@ public class HelperScript : MonoBehaviour
         }
 
         // Left
-        x = 0.0f + simulation.particleSize;
-        y = 0.0f + 5 * simulation.particleSize;
-        for (int i = 0; i < leftLength; i++)
+        for (int l = 0; l < layers; l++)
         {
-            InitBoundaryParticle(new Vector2(x, y));
-
-            y += 2 * simulation.particleSize;
-        }
-
-        // Double
-        if (doubleBorder)
-        {
-            x = 0.0f + 3 * simulation.particleSize;
-            y = 0.0f + 5 * simulation.particleSize;
+            float x = 0.0f + simulation.particleSize + (2 * l) * simulation.particleSize;
+            float y = 0.0f + 5 * simulation.particleSize;
             for (int i = 0; i < leftLength; i++)
             {
                 InitBoundaryParticle(new Vector2(x, y));
@@ -179,25 +149,31 @@ public class HelperScript : MonoBehaviour
         }
 
         // Right
-        x = (bottomLength * 2 * simulation.particleSize) - 3 * simulation.particleSize;
-        y = 0.0f + 5 * simulation.particleSize;
-        for (int i = 0; i < rightLength; i++)
+        for (int l = 0; l < layers; l++)
         {
-            InitBoundaryParticle(new Vector2(x, y));
-
-            y += 2 * simulation.particleSize;
-        }
-
-        // Double
-        if (doubleBorder)
-        {
-            x = (bottomLength * 2 * simulation.particleSize) - simulation.particleSize;
-            y = 0.0f + 5 * simulation.particleSize;
+            float x = (bottomLength * 2 * simulation.particleSize) - 3 * simulation.particleSize + (2 * l) * simulation.particleSize;
+            float y = 0.0f + 5 * simulation.particleSize;
             for (int i = 0; i < rightLength; i++)
             {
                 InitBoundaryParticle(new Vector2(x, y));
 
                 y += 2 * simulation.particleSize;
+            }
+        }
+    }
+
+    public void setLine(Vector2 start, int length, float angle, int layers, int direction = 1)
+    {
+        for (int l = 0; l < layers; l++)
+        {
+            float x = start.x;
+            float y = start.y;
+            y += (2 * l) * simulation.particleSize;
+            for (int i = 0; i < length; i++)
+            {
+                InitBoundaryParticle(new Vector2(x, y));
+                x += 2 * direction * simulation.particleSize;
+                y += angle;
             }
         }
     }
